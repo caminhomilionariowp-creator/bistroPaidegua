@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@layer utilities {
+  /* Grid pattern background similar to Master Dossier */
+  .bg-blueprint-grid {
+    background-size: 24px 24px;
+    background-image: 
+      linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  }
+  
+  .bg-blueprint-grid-dark {
+    background-size: 24px 24px;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  }
+
+  /* Paper shadows */
+  .shadow-paper {
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  }
+
+  /* A3 Dimensions simulation for preview */
+  .a3-landscape-container {
+    width: 100%;
+    max-width: 1200px;
+    min-height: auto;
+  }
+
+  .a3-portrait-container {
+    width: 100%;
+    max-width: 850px;
+    min-height: auto;
+  }
+}
+
+/* Print Optimization - A3 Real Scale (297mm x 420mm) & A4 */
+@media print {
+  @page {
+    size: A3 landscape;
+    margin: 8mm;
+  }
+
+  @page a3-landscape-page {
+    size: 420mm 297mm;
+    margin: 8mm;
+  }
+
+  @page a3-portrait-page {
+    size: 297mm 420mm;
+    margin: 8mm;
+  }
+
+  @page a4-portrait-page {
+    size: 210mm 297mm;
+    margin: 8mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10.5pt;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .page-break-inside-avoid {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .a3-landscape-sheet {
+    page: a3-landscape-page;
+    width: 404mm !important;
+    min-height: 281mm !important;
+    margin: 0 !important;
+    padding: 8mm !important;
+    box-sizing: border-box !important;
+    page-break-after: always;
+    break-after: page;
+    overflow: visible !important;
+  }
+
+  .a4-portrait-sheet {
+    page: a4-portrait-page;
+    width: 194mm !important;
+    margin: 0 !important;
+    padding: 6mm !important;
+    box-sizing: border-box !important;
+    page-break-after: always;
+    break-after: page;
+    overflow: visible !important;
+  }
+}
+
+@media screen {
+  .print-only {
+    display: none !important;
+  }
+}

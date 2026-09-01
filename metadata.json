@@ -1,0 +1,6 @@
+{
+  "name": "Bistrô Pai d'Égua - Documentos Oficiais & Gestão Visual",
+  "description": "Sistema completo para criar, ilustrar, personalizar e imprimir todos os documentos oficiais, POPs, checklists, cartazes visuais e etiquetas do Bistrô Pai d'Égua.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
