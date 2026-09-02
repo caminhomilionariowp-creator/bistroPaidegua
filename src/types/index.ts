@@ -1,4 +1,5 @@
-export type DocumentCategory = 
+export type DocumentCategory =
+  | 'painel'
   | 'dossier'
   | 'posters'
   | 'checklists'
@@ -8,6 +9,34 @@ export type DocumentCategory =
   | 'labels'
   | 'recipes'
   | 'illustrator';
+
+/* ===== Painel do "Dia 1" — Indicadores operacionais (Dossiê §13) ===== */
+
+export type OccurrenceType = 'ruptura' | 'perda' | 'nao_conformidade' | 'elogio';
+
+export interface OperationalOccurrence {
+  id: string;
+  date: string;            // ISO yyyy-mm-dd
+  time: string;            // HH:MM
+  type: OccurrenceType;
+  sector: 'cozinha' | 'estoque' | 'salao' | 'caixa' | 'limpeza' | 'gerencia';
+  item: string;            // insumo / prato / processo envolvido
+  reason: string;          // motivo exato (obrigatório pela Regra 5: fatos contra conversas)
+  quantity?: string;       // ex.: "2,4 kg", "3 un"
+  estimatedLossBRL?: number;
+  registeredBy: string;    // autoria
+  actionTaken?: string;
+  correctionStep?: 1 | 2 | 3 | 4; // Escada de Correção
+  resolved?: boolean;
+}
+
+export type PrincipleSignal = 'verde' | 'amarelo' | 'vermelho' | 'auto';
+
+export interface PrincipleStatusEntry {
+  signal: PrincipleSignal;
+  note?: string;
+  updatedAt?: string;
+}
 
 export interface MasterDossierSection {
   id: string;

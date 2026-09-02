@@ -1,12 +1,12 @@
 import React from 'react';
-import { 
-  Printer, 
-  Sparkles, 
-  BookOpen, 
-  Layers, 
-  FileText, 
-  Tag, 
-  ChefHat, 
+import {
+  Printer,
+  Sparkles,
+  BookOpen,
+  Layers,
+  FileText,
+  Tag,
+  ChefHat,
   Palette,
   CheckCircle2,
   Users,
@@ -14,7 +14,8 @@ import {
   CheckSquare,
   KeyRound,
   ShieldCheck,
-  User
+  User,
+  Gauge
 } from 'lucide-react';
 import { DocumentCategory, EmployeeAccount } from '../types';
 import { CharacterAvatar } from './Characters';
@@ -85,7 +86,8 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Quick Category Tabs Navigation - Dossier as First Item */}
           <nav className="hidden lg:flex items-center space-x-1 overflow-x-auto py-1 scrollbar-none">
             {[
-              { id: 'dossier', label: '📖 Dossiê Mestre', icon: BookOpen, highlight: true },
+              { id: 'painel', label: '📊 Painel do Dia 1', icon: Gauge, highlight: true },
+              { id: 'dossier', label: '📖 Dossiê Mestre', icon: BookOpen },
               { id: 'posters', label: 'Cartazes A3', icon: Layers },
               { id: 'checklists', label: 'Checklists', icon: CheckSquare },
               { id: 'team', label: 'Equipe', icon: Users },

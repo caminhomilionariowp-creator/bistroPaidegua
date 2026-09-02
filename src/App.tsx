@@ -3,6 +3,7 @@ import { DocumentCategory, ResponsibleLeader, ChecklistItemData, EmployeeAccount
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { DossierViewer } from './components/DossierViewer';
+import { CockpitPanel } from './components/CockpitPanel';
 import { PosterStudio } from './components/PosterStudio';
 import { PopViewer } from './components/PopViewer';
 import { FormsViewer } from './components/FormsViewer';
@@ -18,7 +19,7 @@ import { loadChecklistItems, saveChecklistItems } from './data/checklistsData';
 import { Printer, Sparkles, BookOpen, Layers, FileText, CheckCircle2, Tag, ChefHat, Palette, Users, CheckSquare } from 'lucide-react';
 
 export default function App() {
-  const [currentCategory, setCurrentCategory] = useState<DocumentCategory>('dossier');
+  const [currentCategory, setCurrentCategory] = useState<DocumentCategory>('painel');
   const [selectedItemId, setSelectedItemId] = useState<string | undefined>(undefined);
   const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
@@ -56,6 +57,8 @@ export default function App() {
 
   const getCategoryTitle = () => {
     switch (currentCategory) {
+      case 'painel':
+        return 'Painel do "Dia 1" — Cockpit Operacional (Aderência, Ruptura, Perdas & Princípios)';
       case 'dossier':
         return 'Dossiê Mestre de Implantação v1.1 (Diagnóstico & Arquitetura)';
       case 'posters':
@@ -119,7 +122,7 @@ export default function App() {
           <div className="no-print mb-6 bg-white border border-stone-300 rounded-xl p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center space-x-3">
               <div className="w-9 h-9 rounded-lg bg-stone-900 text-amber-300 flex items-center justify-center font-bold shadow-xs">
-                {currentCategory === 'dossier' ? '📖' : currentCategory === 'posters' ? '🖼️' : currentCategory === 'checklists' ? '📋' : currentCategory === 'team' ? '👥' : '📄'}
+                {currentCategory === 'painel' ? '📊' : currentCategory === 'dossier' ? '📖' : currentCategory === 'posters' ? '🖼️' : currentCategory === 'checklists' ? '📋' : currentCategory === 'team' ? '👥' : '📄'}
               </div>
               <div>
                 <h3 className="font-extrabold text-stone-900 text-xs sm:text-sm">
@@ -169,6 +172,19 @@ export default function App() {
           </div>
 
           {/* Active View Component */}
+          {currentCategory === 'painel' && (
+            <CockpitPanel
+              checklistItems={checklistItems}
+              team={team}
+              currentEmployee={currentEmployee}
+              onNavigate={(cat) => {
+                setCurrentCategory(cat);
+                setSelectedItemId(undefined);
+              }}
+              onOpenLoginModal={() => setIsLoginModalOpen(true)}
+            />
+          )}
+
           {currentCategory === 'dossier' && (
             <DossierViewer onOpenIllustrator={handleOpenIllustrator} />
           )}

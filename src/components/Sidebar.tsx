@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  BookOpen, 
-  Layers, 
-  FileText, 
-  CheckCircle2, 
-  Tag, 
-  ChefHat, 
-  Palette, 
+import {
+  BookOpen,
+  Layers,
+  FileText,
+  CheckCircle2,
+  Tag,
+  ChefHat,
+  Palette,
   HelpCircle,
   Sparkles,
   ShieldCheck,
@@ -16,7 +16,8 @@ import {
   CheckSquare,
   KeyRound,
   Star,
-  Lock
+  Lock,
+  Gauge
 } from 'lucide-react';
 import { DocumentCategory, EmployeeAccount } from '../types';
 import { POSTERS_DATA } from '../data/postersData';
@@ -138,6 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         
         <div className="space-y-1">
           {[
+            { id: 'painel', label: '★ Painel do Dia 1', desc: 'Cockpit: aderência, ruptura, perdas', icon: Gauge, count: 'Vivo' },
             { id: 'dossier', label: '1. Dossiê Mestre v1.1', desc: 'Diagnóstico & Governança', icon: BookOpen, count: '17 seções' },
             { id: 'posters', label: '2. Cartazes A3 (6 Páginas)', desc: 'Tamanho Real & Sinais', icon: Layers, count: '6 Postos' },
             { id: 'checklists', label: '3. Checklists por Setor', desc: 'Feitos, Faltando & Status', icon: CheckSquare, count: 'Diário' },
