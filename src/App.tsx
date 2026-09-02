@@ -26,6 +26,13 @@ export default function App() {
   const [selectedItemId, setSelectedItemId] = useState<string | undefined>(undefined);
   const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+  const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
+
+  const goToCategory = (cat: DocumentCategory) => {
+    setCurrentCategory(cat);
+    setSelectedItemId(undefined);
+    setIsNavOpen(false);
+  };
   
   // Shared persistent state for Team Members, Employees & Checklists
   const [team, setTeam] = useState<ResponsibleLeader[]>(() => loadTeamMembers());
@@ -92,58 +99,58 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-100 flex flex-col selection:bg-emerald-500 selection:text-white">
-      
+    <div className="min-h-screen bg-stone-100 flex flex-col overflow-x-hidden selection:bg-emerald-500 selection:text-white">
+
       {/* Top Header */}
       <Header
         currentCategory={currentCategory}
-        onSelectCategory={(cat) => {
-          setCurrentCategory(cat);
-          setSelectedItemId(undefined);
-        }}
+        onSelectCategory={goToCategory}
         onOpenAiAssistant={() => setIsAiModalOpen(true)}
         onPrint={handlePrint}
         documentTitle={getCategoryTitle()}
         currentEmployee={currentEmployee}
         onOpenLoginModal={() => setIsLoginModalOpen(true)}
+        onOpenMenu={() => setIsNavOpen(true)}
       />
 
       {/* Main Workspace Layout */}
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
-        
+
         {/* Left Navigation Sidebar */}
         <Sidebar
           currentCategory={currentCategory}
-          onSelectCategory={(cat) => {
-            setCurrentCategory(cat);
-            setSelectedItemId(undefined);
-          }}
+          onSelectCategory={goToCategory}
           selectedItemId={selectedItemId}
-          onSelectItem={(id) => setSelectedItemId(id)}
+          onSelectItem={(id) => {
+            setSelectedItemId(id);
+            setIsNavOpen(false);
+          }}
           currentEmployee={currentEmployee}
           onOpenLoginModal={() => setIsLoginModalOpen(true)}
+          isOpen={isNavOpen}
+          onClose={() => setIsNavOpen(false)}
         />
 
         {/* Central Document Workspace */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-w-full">
+        <main className="flex-1 min-w-0 p-3 sm:p-6 lg:p-8 overflow-y-auto max-w-full">
           
           {/* Quick Notice Banner on screen (hidden on print) */}
-          <div className="no-print mb-6 bg-white border border-stone-300 rounded-xl p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-9 h-9 rounded-lg bg-stone-900 text-amber-300 flex items-center justify-center font-bold shadow-xs">
+          <div className="no-print mb-4 sm:mb-6 bg-white border border-stone-300 rounded-xl p-3 sm:p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center space-x-3 min-w-0">
+              <div className="w-9 h-9 shrink-0 rounded-lg bg-stone-900 text-amber-300 flex items-center justify-center font-bold shadow-xs">
                 {currentCategory === 'painel' ? '📊' : currentCategory === 'posto' ? '🧑‍🍳' : currentCategory === 'estoque' ? '🌡️' : currentCategory === 'rastreabilidade' ? '🏷️' : currentCategory === 'dossier' ? '📖' : currentCategory === 'posters' ? '🖼️' : currentCategory === 'checklists' ? '📋' : currentCategory === 'team' ? '👥' : '📄'}
               </div>
-              <div>
+              <div className="min-w-0">
                 <h3 className="font-extrabold text-stone-900 text-xs sm:text-sm">
                   {getCategoryTitle()}
                 </h3>
-                <p className="text-[11px] text-stone-500">
+                <p className="hidden sm:block text-[11px] text-stone-500">
                   Documentação técnica oficial padronizada para visualização e impressão em tamanho real sem cortes.
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="hidden sm:flex flex-wrap items-center gap-2">
               {currentCategory !== 'dossier' && (
                 <button
                   onClick={() => {

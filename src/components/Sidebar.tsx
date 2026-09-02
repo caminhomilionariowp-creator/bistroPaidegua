@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BookOpen,
   Layers,
@@ -20,7 +20,8 @@ import {
   Gauge,
   HardHat,
   Thermometer,
-  Tags
+  Tags,
+  X
 } from 'lucide-react';
 import { DocumentCategory, EmployeeAccount } from '../types';
 import { POSTERS_DATA } from '../data/postersData';
@@ -38,6 +39,9 @@ interface SidebarProps {
   onSelectItem?: (id: string) => void;
   currentEmployee?: EmployeeAccount;
   onOpenLoginModal?: () => void;
+  /** controle do drawer no mobile */
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -46,9 +50,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
   selectedItemId,
   onSelectItem,
   currentEmployee,
-  onOpenLoginModal
+  onOpenLoginModal,
+  isOpen = false,
+  onClose
 }) => {
   const [onlyMySector, setOnlyMySector] = useState(false);
+
+  // trava o scroll do corpo enquanto o drawer está aberto no mobile
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }
+  }, [isOpen]);
 
   const empSector = currentEmployee?.primarySector || 'cozinha';
   const isManager = currentEmployee?.isManager || empSector === 'gerencia';
@@ -72,18 +88,41 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside className="no-print w-72 bg-white border-r border-stone-200 flex flex-col h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto">
-      
+    <>
+      {/* Backdrop — só no mobile, quando o drawer está aberto */}
+      {isOpen && (
+        <div
+          onClick={onClose}
+          className="no-print fixed inset-0 z-40 bg-black/50 lg:hidden"
+        />
+      )}
+
+      <aside
+        className={`no-print bg-white border-r border-stone-200 flex-col overflow-y-auto
+          fixed top-0 left-0 z-50 w-[86vw] max-w-xs h-full shadow-2xl
+          lg:flex lg:sticky lg:top-16 lg:z-auto lg:w-72 lg:max-w-none lg:h-[calc(100vh-4rem)] lg:shadow-none
+          ${isOpen ? 'flex' : 'hidden'}`}
+      >
+
       {/* Brand Identity Header in Sidebar */}
       <div className="p-4 bg-gradient-to-b from-stone-900 to-stone-950 text-white border-b border-stone-800 flex flex-col items-center justify-center text-center relative overflow-hidden">
         {/* Subtle background glow */}
         <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/10 rounded-full blur-xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none" />
-        
+
+        {/* Fechar (mobile) */}
+        <button
+          onClick={onClose}
+          className="lg:hidden absolute top-2 right-2 z-10 w-8 h-8 rounded-lg bg-stone-800/80 text-stone-300 hover:text-white flex items-center justify-center border border-stone-700"
+          aria-label="Fechar menu"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
         <div className="bg-white/95 rounded-2xl p-2.5 shadow-md border border-white/20 my-1">
           <BrandLogo variant="full" size="md" className="drop-shadow-xs" />
         </div>
-        
+
         <div className="mt-2 text-[11px] font-medium text-stone-300 flex items-center justify-center gap-1.5 border-t border-stone-800/80 pt-2 w-full">
           <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
           <span>Cozinha &amp; Cultura Paraense</span>
@@ -395,7 +434,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </p>
       </div>
 
-    </aside>
+      </aside>
+    </>
   );
 };
 

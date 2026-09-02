@@ -85,10 +85,18 @@ POPs (POP-01..05), Formulários (F-01..06), Etiquetas Universais, Fichas Técnic
 
 ## 6. Deploy
 
-- **Ainda não publicado.** Alvo: projeto próprio na Vercel na conta `Willianrvc`,
-  separado do ELEVO. Confirmar com o usuário antes de publicar.
-- Antes de publicar fora do AI Studio: mover a chamada Gemini para função serverless
-  (`/api/generate`) para não expor `GEMINI_API_KEY` no browser.
+- **Projeto já vinculado à Vercel** (o usuário rodou `vercel link`):
+  `.vercel/project.json` → projeto `projeto-pai-degua`, org
+  `team_oHoR6XODnGINMPhCSKTmgUeW` (conta `williancavalcantemam-6319s-projects`).
+  `.vercel/` e `.env.local` (traz `VERCEL_OIDC_TOKEN`) estão no `.gitignore`.
+- `vercel.json` no repo fixa framework Vite, `npm run build`, output `dist`.
+- A CLI local está logada em `atriumparfum-4462` (conta da Atrium) — **não tem
+  acesso** ao escopo `williancavalcantemam`; o deploy tem que sair do usuário
+  (`vercel login` + `vercel --prod`, ou importar o repo pelo dashboard).
+- Antes de a IA funcionar em produção: mover a chamada Gemini para função
+  serverless (`/api/generate`) — hoje `GEMINI_API_KEY` é lida no browser e o
+  Vite não injeta a variável no bundle, então o Assistente cai no modo offline.
+  Todo o resto funciona (client-side + localStorage).
 
 ### Adicionado — Estoque & Termômetro de Ruptura (2026-09-01, mesma sessão)
 - **`src/components/StockControl.tsx`** + **`src/data/stockData.ts`** (§8):
@@ -131,6 +139,18 @@ POPs (POP-01..05), Formulários (F-01..06), Etiquetas Universais, Fichas Técnic
 - RoleStation da Auxiliar: link "Abrir etiquetas" agora vai para a Rastreabilidade.
 - O módulo antigo **Etiquetas Universais** (`labels`) continua como gerador de
   folha A4 para pré-impressão em branco.
+
+### Ajuste — experiência mobile (2026-09-02)
+- **Sidebar vira drawer no mobile:** `<lg` é `hidden` quando fechada e `fixed`
+  (86vw / max-w-xs) quando aberta, com backdrop; `lg+` continua rail fixo
+  (`lg:sticky lg:top-16`). Props novas `isOpen`/`onClose`; trava o scroll do body.
+  Sem animação de slide de propósito — transição de `translate` congela quando a
+  aba está oculta (visto no harness); `hidden`/`flex` é à prova de tudo.
+- **Header:** botão hambúrguer `lg:hidden` abre o drawer; título do documento
+  passa a truncar (`flex-1 min-w-0`); paddings menores no mobile.
+- **App:** `overflow-x-hidden` na raiz; `main` com `min-w-0`; `goToCategory()`
+  fecha o drawer ao navegar; banner de aviso enxuto no mobile (só ícone + título).
+- Verificado a 375 / 760 / 1280px: zero overflow horizontal em todos os módulos.
 
 ## 7. Próximos passos sugeridos (mapa de aderência ao dossiê)
 

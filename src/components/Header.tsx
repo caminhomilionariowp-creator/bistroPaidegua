@@ -7,6 +7,7 @@ import {
   HardHat,
   Thermometer,
   Tags,
+  Menu,
 } from 'lucide-react';
 import { DocumentCategory, EmployeeAccount } from '../types';
 import { CharacterAvatar } from './Characters';
@@ -20,6 +21,7 @@ interface HeaderProps {
   documentTitle: string;
   currentEmployee?: EmployeeAccount;
   onOpenLoginModal?: () => void;
+  onOpenMenu?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -29,7 +31,8 @@ export const Header: React.FC<HeaderProps> = ({
   onPrint,
   documentTitle,
   currentEmployee,
-  onOpenLoginModal
+  onOpenLoginModal,
+  onOpenMenu
 }) => {
   const activeEmp = currentEmployee || {
     id: 'emp-manel',
@@ -48,14 +51,21 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="no-print sticky top-0 z-40 bg-stone-900 border-b border-stone-800 text-stone-100 shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-3">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 gap-2 sm:gap-3">
           
           {/* Official Brand Logo & Document Context */}
-          <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <button
+              onClick={onOpenMenu}
+              className="lg:hidden shrink-0 w-9 h-9 rounded-lg bg-stone-800 border border-stone-700 text-stone-200 hover:text-white flex items-center justify-center"
+              aria-label="Abrir menu de navegação"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
             <button
               onClick={() => onSelectCategory('painel')}
-              className="flex items-center text-left group bg-stone-950/80 hover:bg-stone-950 px-2.5 py-1.5 rounded-xl border border-stone-800 hover:border-red-600/50 transition-all cursor-pointer shadow-sm shrink-0"
+              className="flex items-center text-left group bg-stone-950/80 hover:bg-stone-950 px-2 sm:px-2.5 py-1.5 rounded-xl border border-stone-800 hover:border-red-600/50 transition-all cursor-pointer shadow-sm shrink-0"
               title="Ir para o Painel do Dia 1"
             >
               <BrandLogo variant="horizontal" size="sm" theme="dark" />
