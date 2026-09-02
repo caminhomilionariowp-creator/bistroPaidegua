@@ -16,7 +16,8 @@ import {
   ShieldCheck,
   User,
   Gauge,
-  HardHat
+  HardHat,
+  Thermometer
 } from 'lucide-react';
 import { DocumentCategory, EmployeeAccount } from '../types';
 import { CharacterAvatar } from './Characters';
@@ -89,6 +90,7 @@ export const Header: React.FC<HeaderProps> = ({
             {[
               { id: 'painel', label: '📊 Painel do Dia 1', icon: Gauge, highlight: true },
               { id: 'posto', label: '🧑‍🍳 Posto', icon: HardHat, highlight: true },
+              { id: 'estoque', label: '🌡️ Estoque', icon: Thermometer, highlight: true },
               { id: 'dossier', label: '📖 Dossiê Mestre', icon: BookOpen },
               { id: 'posters', label: 'Cartazes A3', icon: Layers },
               { id: 'checklists', label: 'Checklists', icon: CheckSquare },

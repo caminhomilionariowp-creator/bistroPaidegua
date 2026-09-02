@@ -18,7 +18,8 @@ import {
   Star,
   Lock,
   Gauge,
-  HardHat
+  HardHat,
+  Thermometer
 } from 'lucide-react';
 import { DocumentCategory, EmployeeAccount } from '../types';
 import { POSTERS_DATA } from '../data/postersData';
@@ -142,6 +143,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {[
             { id: 'painel', label: '★ Painel do Dia 1', desc: 'Cockpit: aderência, ruptura, perdas', icon: Gauge, count: 'Vivo' },
             { id: 'posto', label: '★ Posto de Trabalho', desc: 'Rotina passo a passo por cargo', icon: HardHat, count: '5 cargos' },
+            { id: 'estoque', label: '★ Estoque & Ruptura', desc: 'Termômetro e gatilho de compra', icon: Thermometer, count: 'Vivo' },
             { id: 'dossier', label: '1. Dossiê Mestre v1.1', desc: 'Diagnóstico & Governança', icon: BookOpen, count: '17 seções' },
             { id: 'posters', label: '2. Cartazes A3 (6 Páginas)', desc: 'Tamanho Real & Sinais', icon: Layers, count: '6 Postos' },
             { id: 'checklists', label: '3. Checklists por Setor', desc: 'Feitos, Faltando & Status', icon: CheckSquare, count: 'Diário' },

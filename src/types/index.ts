@@ -1,6 +1,7 @@
 export type DocumentCategory =
   | 'painel'
   | 'posto'
+  | 'estoque'
   | 'dossier'
   | 'posters'
   | 'checklists'
@@ -29,6 +30,29 @@ export interface OperationalOccurrence {
   actionTaken?: string;
   correctionStep?: 1 | 2 | 3 | 4; // Escada de Correção
   resolved?: boolean;
+}
+
+/* ===== Estoque & Termômetro de Ruptura (Dossiê §8) ===== */
+
+export type StockLevelKey = 'ideal' | 'minimo' | 'critico' | 'ruptura';
+
+export interface StockItem {
+  id: string;
+  name: string;
+  category: string;
+  unit: string;                 // kg, L, un, pct, cx
+  current: number;
+  ideal: number;                // faixa cheia
+  min: number;                  // gatilho de compra (amarelo)
+  critical: number;             // ameaça iminente (laranja)
+  supplier?: string;
+  leadTimeDays?: number;        // prazo do fornecedor
+  location?: string;            // endereço PEPS
+  perishable?: boolean;
+  lastCountAt?: string;         // ISO
+  lastCountBy?: string;
+  purchaseTriggeredAt?: string; // ISO — pedido disparado
+  notes?: string;
 }
 
 export type PrincipleSignal = 'verde' | 'amarelo' | 'vermelho' | 'auto';

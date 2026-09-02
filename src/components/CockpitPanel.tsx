@@ -41,6 +41,7 @@ import {
   CORRECTION_LADDER,
   DIA1_INDICATORS,
 } from '../data/cockpitData';
+import { loadStock, stockLevel, needsPurchase } from '../data/stockData';
 import { Gauge, MiniBar } from './Gauge';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
 import { CharacterAvatar } from './Characters';
@@ -126,6 +127,10 @@ export const CockpitPanel: React.FC<CockpitPanelProps> = ({
       leader: team.find((t) => t.sectorId === (s.id === 'limpeza' ? 'cozinha' : s.id)),
     };
   });
+
+  const stockItems = useMemo(() => loadStock(), []);
+  const stockRuptura = stockItems.filter((i) => stockLevel(i) === 'ruptura').length;
+  const stockNoGatilho = stockItems.filter(needsPurchase).length;
 
   const todayOcc = occurrences.filter((o) => o.date === today);
   const rupturasHoje = todayOcc.filter((o) => o.type === 'ruptura');
@@ -392,11 +397,17 @@ export const CockpitPanel: React.FC<CockpitPanelProps> = ({
         {/* Ruptura */}
         <StatCard
           icon={<PackageX className="w-5 h-5" />}
-          tone={rupturasHoje.length === 0 ? 'emerald' : 'rose'}
+          tone={rupturasHoje.length === 0 && stockRuptura === 0 ? 'emerald' : 'rose'}
           value={String(rupturasHoje.length)}
           label="Ocorrências de ruptura hoje"
-          target="Meta operacional: ZERO"
-          onClick={() => setShowForm(true)}
+          target={
+            stockRuptura > 0
+              ? `${stockRuptura} item(ns) zerados no estoque • ${stockNoGatilho} no gatilho`
+              : stockNoGatilho > 0
+                ? `${stockNoGatilho} item(ns) no gatilho de compra`
+                : 'Meta operacional: ZERO'
+          }
+          onClick={() => onNavigate?.('estoque')}
         />
 
         {/* Perdas */}

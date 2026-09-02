@@ -5,6 +5,7 @@ import { Sidebar } from './components/Sidebar';
 import { DossierViewer } from './components/DossierViewer';
 import { CockpitPanel } from './components/CockpitPanel';
 import { RoleStation } from './components/RoleStation';
+import { StockControl } from './components/StockControl';
 import { PosterStudio } from './components/PosterStudio';
 import { PopViewer } from './components/PopViewer';
 import { FormsViewer } from './components/FormsViewer';
@@ -62,6 +63,8 @@ export default function App() {
         return 'Painel do "Dia 1" — Cockpit Operacional (Aderência, Ruptura, Perdas & Princípios)';
       case 'posto':
         return 'Posto de Trabalho — Rotina Passo a Passo, Paramentação e Regras de Ouro por Cargo';
+      case 'estoque':
+        return 'Estoque & Termômetro de Ruptura — Níveis, Gatilho de Compra e Regra P.E.P.S.';
       case 'dossier':
         return 'Dossiê Mestre de Implantação v1.1 (Diagnóstico & Arquitetura)';
       case 'posters':
@@ -125,7 +128,7 @@ export default function App() {
           <div className="no-print mb-6 bg-white border border-stone-300 rounded-xl p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center space-x-3">
               <div className="w-9 h-9 rounded-lg bg-stone-900 text-amber-300 flex items-center justify-center font-bold shadow-xs">
-                {currentCategory === 'painel' ? '📊' : currentCategory === 'posto' ? '🧑‍🍳' : currentCategory === 'dossier' ? '📖' : currentCategory === 'posters' ? '🖼️' : currentCategory === 'checklists' ? '📋' : currentCategory === 'team' ? '👥' : '📄'}
+                {currentCategory === 'painel' ? '📊' : currentCategory === 'posto' ? '🧑‍🍳' : currentCategory === 'estoque' ? '🌡️' : currentCategory === 'dossier' ? '📖' : currentCategory === 'posters' ? '🖼️' : currentCategory === 'checklists' ? '📋' : currentCategory === 'team' ? '👥' : '📄'}
               </div>
               <div>
                 <h3 className="font-extrabold text-stone-900 text-xs sm:text-sm">
@@ -194,6 +197,16 @@ export default function App() {
               currentEmployee={currentEmployee}
               allEmployees={employees}
               onOpenLoginModal={() => setIsLoginModalOpen(true)}
+              onNavigate={(cat) => {
+                setCurrentCategory(cat);
+                setSelectedItemId(undefined);
+              }}
+            />
+          )}
+
+          {currentCategory === 'estoque' && (
+            <StockControl
+              currentEmployee={currentEmployee}
               onNavigate={(cat) => {
                 setCurrentCategory(cat);
                 setSelectedItemId(undefined);

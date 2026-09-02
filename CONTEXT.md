@@ -90,6 +90,25 @@ POPs (POP-01..05), Formulários (F-01..06), Etiquetas Universais, Fichas Técnic
 - Antes de publicar fora do AI Studio: mover a chamada Gemini para função serverless
   (`/api/generate`) para não expor `GEMINI_API_KEY` no browser.
 
+### Adicionado — Estoque & Termômetro de Ruptura (2026-09-01, mesma sessão)
+- **`src/components/StockControl.tsx`** + **`src/data/stockData.ts`** (§8):
+  - 34 itens de seed reais do Bistrô (tucupi, jambu, maniva, açaí, camarão seco…),
+    cada um com `current / min / critical / ideal`, fornecedor, prazo, endereço PEPS.
+  - Nível calculado (`stockLevel`): Ruptura (≤0) → Crítico (≤critical) →
+    Mínimo (≤min) → Ideal. `LEVEL_META` traz cor/ação de cada faixa.
+  - 4 cards de contagem por nível + barra de distribuição + **lista de compras**
+    (itens no gatilho, ordenados por gravidade) com quantidade sugerida
+    (`suggestedPurchase` = ideal − current), "disparar compra" por item e em lote,
+    e **cópia do pedido para WhatsApp agrupada por fornecedor**.
+  - Grade de itens com mini-termômetro horizontal (marcadores de crítico/mínimo/
+    ideal), ajuste rápido −/+ e edição direta, badge de perecível.
+  - Modo **Contagem rápida (F-04)**: lista enxuta pra bater o estoque; grava
+    `lastCountAt` / `lastCountBy`.
+  - Persistência: `bistro_pai_degua_estoque_v1`.
+- **Painel do Dia 1** agora lê o estoque: o card "Ocorrências de ruptura" mostra
+  também itens zerados / no gatilho e leva ao módulo Estoque.
+- Nav em Header e Sidebar; categoria `'estoque'`.
+
 ## 7. Próximos passos sugeridos (mapa de aderência ao dossiê)
 
 1. Módulo de **Estoque / Termômetro de Ruptura** (§8) — níveis ideal/mínimo/crítico
