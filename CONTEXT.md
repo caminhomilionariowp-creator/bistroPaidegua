@@ -170,6 +170,19 @@ POPs (POP-01..05), Formulários (F-01..06), Etiquetas Universais, Fichas Técnic
   fecha o drawer ao navegar; banner de aviso enxuto no mobile (só ícone + título).
 - Verificado a 375 / 760 / 1280px: zero overflow horizontal em todos os módulos.
 
+### Adicionado — Fotos reais dos pratos (2026-09-02)
+- **NÃO usar as fotos da listagem do Google Maps** — são de terceiros (atribuídas a
+  usuários), o Google marca "direitos autorais". A equipe fotografa e sobe.
+- `src/lib/photoStore.ts`: guarda fotos em `localStorage` (`bistro_pai_degua_fotos_v1`),
+  chave por prato (`recipe:<id>`) / auditoria (`audit:<n>`). `fileToResizedDataUri`
+  redimensiona pra 1280px JPEG q0.82 no upload.
+- `src/components/PhotoUpload.tsx`: quadro "Tirar foto" (`capture="environment"` abre a
+  câmera no celular) / "Da galeria" / Trocar / Remover / Anotar.
+- **Fichas Técnicas**: cada ficha tem slot de foto (substituiu o placeholder).
+- **Estúdio de Ilustração**: recebe `initialImage` (carrega a foto salva no canvas) e
+  `onSaveToSystem` (botão "Salvar no sistema" grava a versão anotada de volta).
+  App (`illustratorTarget`) faz a ponte entre a ficha e o estúdio.
+
 ## 7. Próximos passos sugeridos (mapa de aderência ao dossiê)
 
 1. Módulo de **Estoque / Termômetro de Ruptura** (§8) — níveis ideal/mínimo/crítico

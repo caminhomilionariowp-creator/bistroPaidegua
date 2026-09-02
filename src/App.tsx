@@ -19,6 +19,8 @@ import { SectorChecklist } from './components/SectorChecklist';
 import { LoginModal } from './components/LoginModal';
 import { loadTeamMembers, saveTeamMembers, loadEmployees, saveEmployees, loadCurrentEmployee, saveCurrentEmployeeId } from './data/teamData';
 import { loadChecklistItems, saveChecklistItems } from './data/checklistsData';
+import { RECIPES_DATA } from './data/recipesData';
+import { getPhoto, setPhoto } from './lib/photoStore';
 import { Printer, Sparkles, BookOpen, Layers, FileText, CheckCircle2, Tag, ChefHat, Palette, Users, CheckSquare } from 'lucide-react';
 
 export default function App() {
@@ -27,6 +29,7 @@ export default function App() {
   const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
+  const [illustratorTarget, setIllustratorTarget] = useState<{ key: string; title: string } | undefined>(undefined);
 
   const goToCategory = (cat: DocumentCategory) => {
     setCurrentCategory(cat);
@@ -57,7 +60,20 @@ export default function App() {
   };
 
   const handleOpenIllustrator = (targetId?: any) => {
+    if (typeof targetId === 'string') {
+      const recipe = RECIPES_DATA.find((r) => r.id === targetId);
+      setIllustratorTarget(
+        recipe
+          ? { key: `recipe:${recipe.id}`, title: `Foto do prato: ${recipe.dishName}` }
+          : { key: `item:${targetId}`, title: 'Anotação de foto' },
+      );
+    } else if (typeof targetId === 'number') {
+      setIllustratorTarget({ key: `audit:${targetId}`, title: `Auditoria fotográfica — Foto ${targetId}` });
+    } else {
+      setIllustratorTarget(undefined);
+    }
     setCurrentCategory('illustrator');
+    setIsNavOpen(false);
   };
 
   const handleNavigateToPosters = (posterId: string) => {
@@ -289,7 +305,22 @@ export default function App() {
           )}
 
           {currentCategory === 'illustrator' && (
-            <IllustrationCanvas />
+            <IllustrationCanvas
+              targetTitle={illustratorTarget?.title}
+              initialImage={illustratorTarget ? getPhoto(illustratorTarget.key) : undefined}
+              onSaveToSystem={
+                illustratorTarget
+                  ? (dataUrl) => {
+                      try {
+                        setPhoto(illustratorTarget.key, dataUrl);
+                        return true;
+                      } catch {
+                        return false;
+                      }
+                    }
+                  : undefined
+              }
+            />
           )}
 
         </main>

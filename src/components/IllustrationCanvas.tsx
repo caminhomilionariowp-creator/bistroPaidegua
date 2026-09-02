@@ -20,12 +20,19 @@ import {
 interface IllustrationCanvasProps {
   targetTitle?: string;
   onSaveIllustration?: (dataUrl: string) => void;
+  /** foto já salva no sistema para esse alvo — carrega no canvas ao abrir */
+  initialImage?: string;
+  /** salva a ilustração de volta no sistema (localStorage); retorna false se falhar */
+  onSaveToSystem?: (dataUrl: string) => boolean;
 }
 
 export const IllustrationCanvas: React.FC<IllustrationCanvasProps> = ({
   targetTitle = "Área de Trabalho / Bancada / Equipamento do Bistrô",
-  onSaveIllustration
+  onSaveIllustration,
+  initialImage,
+  onSaveToSystem
 }) => {
+  const [savedMsg, setSavedMsg] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [selectedTool, setSelectedTool] = useState<'brush' | 'arrow' | 'rect' | 'circle' | 'text' | 'stamp'>('brush');
   const [brushColor, setBrushColor] = useState<string>('#ef4444'); // Default red for operational callouts
@@ -66,9 +73,27 @@ export const IllustrationCanvas: React.FC<IllustrationCanvasProps> = ({
       ctx.stroke();
     }
 
-    // Save initial state to history
-    setHistory([ctx.getImageData(0, 0, canvas.width, canvas.height)]);
-  }, []);
+    const finish = () => setHistory([ctx.getImageData(0, 0, canvas.width, canvas.height)]);
+
+    // Se veio uma foto salva do sistema, carrega ela por cima do grid
+    if (initialImage) {
+      const img = new Image();
+      img.onload = () => {
+        const hRatio = canvas.width / img.width;
+        const vRatio = canvas.height / img.height;
+        const ratio = Math.min(hRatio, vRatio);
+        const dx = (canvas.width - img.width * ratio) / 2;
+        const dy = (canvas.height - img.height * ratio) / 2;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, img.width, img.height, dx, dy, img.width * ratio, img.height * ratio);
+        finish();
+      };
+      img.src = initialImage;
+    } else {
+      finish();
+    }
+  }, [initialImage]);
 
   const getCanvasCoordinates = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -272,6 +297,14 @@ export const IllustrationCanvas: React.FC<IllustrationCanvasProps> = ({
     }
   };
 
+  const handleSaveToSystem = () => {
+    const canvas = canvasRef.current;
+    if (!canvas || !onSaveToSystem) return;
+    const ok = onSaveToSystem(canvas.toDataURL('image/jpeg', 0.85));
+    setSavedMsg(ok ? 'Foto salva no sistema.' : 'Não foi possível salvar (armazenamento cheio).');
+    setTimeout(() => setSavedMsg(null), 3000);
+  };
+
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-16">
       
@@ -283,16 +316,34 @@ export const IllustrationCanvas: React.FC<IllustrationCanvasProps> = ({
             <span>Estúdio de Ilustração & Anotação de Fotos Reais do Bistrô</span>
           </h2>
           <p className="text-xs text-stone-500">
-            Carregue fotos reais da cozinha, estoque e salão, faça anotações visuais com setas, círculos e carimbos operacionais.
+            {targetTitle && targetTitle !== "Área de Trabalho / Bancada / Equipamento do Bistrô"
+              ? <>Editando: <strong className="text-stone-700">{targetTitle}</strong></>
+              : 'Carregue fotos reais da cozinha, estoque e salão e anote com setas, círculos e carimbos operacionais.'}
           </p>
+          {savedMsg && <p className="text-[11px] font-bold text-emerald-700 mt-1">{savedMsg}</p>}
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <label className="cursor-pointer bg-stone-100 hover:bg-stone-200 text-stone-800 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center space-x-1.5 border border-stone-300">
+            <Camera className="w-3.5 h-3.5" />
+            <span>Tirar foto</span>
+            <input type="file" accept="image/*" capture="environment" onChange={handleImageUpload} className="hidden" />
+          </label>
           <label className="cursor-pointer bg-stone-100 hover:bg-stone-200 text-stone-800 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center space-x-1.5 border border-stone-300">
             <Upload className="w-3.5 h-3.5" />
-            <span>Carregar Foto Real</span>
+            <span>Da galeria</span>
             <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
           </label>
+
+          {onSaveToSystem && (
+            <button
+              onClick={handleSaveToSystem}
+              className="bg-stone-900 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-sm"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Salvar no sistema</span>
+            </button>
+          )}
 
           <button
             onClick={handleDownload}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { RECIPES_DATA } from '../data/recipesData';
 import { RecipeTechSheet } from '../types';
+import { PhotoUpload } from './PhotoUpload';
 import { 
   ChefHat, 
   Clock, 
@@ -219,32 +220,15 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
                 </div>
               </div>
 
-              {/* Photo Placeholder / Plating Illustration Box */}
+              {/* Foto oficial do prato — carregada pela equipe */}
               <div className="md:col-span-4 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1 rounded mb-2">
-                    Foto Oficial do Prato
-                  </h3>
-                  
-                  <div className="h-44 bg-gradient-to-br from-amber-50 to-stone-100 border-2 border-dashed border-amber-300 rounded-lg flex flex-col items-center justify-center p-3 text-center text-stone-500 relative overflow-hidden group">
-                    <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 mb-2 font-black text-lg">
-                      {currentRecipe.code}
-                    </div>
-                    <span className="text-[11px] font-bold text-stone-800">
-                      {currentRecipe.dishName}
-                    </span>
-                    <span className="text-[10px] text-stone-500 mt-0.5">
-                      Padrão Bistrô Pai d'Égua
-                    </span>
-                    
-                    <button
-                      onClick={() => onOpenIllustrator && onOpenIllustrator(currentRecipe.id)}
-                      className="no-print mt-2 text-[10px] bg-stone-900 hover:bg-orange-600 text-white font-bold px-2.5 py-1 rounded transition-colors"
-                    >
-                      Anotar / Ilustrar
-                    </button>
-                  </div>
-                </div>
+                <PhotoUpload
+                  photoKey={`recipe:${currentRecipe.id}`}
+                  label="Foto Oficial do Prato"
+                  ratio="wide"
+                  caption={`${currentRecipe.dishName} — padrão Bistrô Pai d'Égua`}
+                  onAnnotate={onOpenIllustrator ? () => onOpenIllustrator(currentRecipe.id) : undefined}
+                />
 
                 <div className="mt-3 bg-stone-50 p-2.5 rounded border border-stone-200 text-xs">
                   <span className="font-bold text-stone-800 block text-[11px] uppercase mb-1">Utensílios Necessários:</span>
