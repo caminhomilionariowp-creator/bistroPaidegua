@@ -28,7 +28,7 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
     cboCode: '5135-05 (Auxiliar nos Serviços de Alimentação)',
     directSupervisor: 'Cozinheiro Líder (Chef Manoel) e Gestão Operacional',
     subordinates: 'Não possui subordinados diretos',
-    workingShift: 'Manhã / Tarde (07:00 às 15:20 ou conforme escala com 1h de intervalo)',
+    workingShift: 'Entra ~3h antes de abrir · Sáb–Dom a partir das 09h00 (serviço 12h00–23h30) · Qua–Sex a partir das 15h30 (serviço 18h00/18h30–23h00). Fechado seg e ter.',
     summary: 'Responsável pela execução técnica do pré-preparo (mise en place), porcionamento de insumos, etiquetagem e rastreabilidade universal obrigatória, esterilização de cubas e superfícies, reposição ágil do rechaud durante o serviço e higienização contínua do posto de trabalho, garantindo que o Cozinheiro Líder opere com máxima eficiência, segurança dos alimentos e zero improviso.',
     keyResponsibilities: [
       'Executar o corte, pesagem e pré-preparo de vegetais, guarnições e insumos regionais (jambu, tucupi, camarão, carnes, farofas e molhos).',
@@ -43,35 +43,36 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
     ],
     shiftRoutine: [
       {
-        phase: '1. Abertura do Turno (07h00 - 11h00)',
-        timeRange: '07h00 às 11h00',
+        phase: '1. Pré-preparo (antes de abrir as portas)',
+        timeRange: 'Sáb–Dom 09h00–12h00 · Qua–Sex 15h30–18h00',
         tasks: [
-          '07h00: Paramentação completa (touca, avental, bota antiderrapante) e assepsia rigorosa das mãos por 40 segundos.',
-          '07h15: Sanitização de bancadas, tábuas e cubas gastronômicas com álcool 70%.',
-          '07h30: Auditoria rápida de geladeiras e freezers — verificar etiquetas e datas de validade; separar imediatamente qualquer item sem identificação.',
-          '08h00: Abastecer o rechaud com água limpa, ligar o aquecimento e verificar a temperatura mínima de 70°C.',
-          '08h15: Organizar as 6 preparações base no rechaud: Arroz Branco, Feijão Preto, Baião de Dois, Vatapá, Maniçoba e Arroz Paraense.',
-          '08h45: Mise en place de guarnições: corte de cebolas em rodelas, limões em 4 partes meia-lua, vinagrete em cubos, farofa crocante e brunoise fina.',
-          '09h30: Pré-preparo de proteínas e insumos amazônicos: dessalgue e limpeza de camarão, lavagem de jambu, aquecimento de tucupi e porcionamento de carnes.',
-          '10h15: Etiquetagem de 100% das cubas de mise en place com a Etiqueta Universal (Data/Hora, Validade, Executor e Conferente).',
-          '10h45: Auxiliar o Cozinheiro Líder na conferência final e assinatura da prancheta F-01 de Abertura.'
+          'Ao entrar: Paramentação completa (touca, avental, bota antiderrapante) e assepsia rigorosa das mãos por 40 segundos.',
+          '+15 min: Sanitização de bancadas, tábuas e cubas gastronômicas com álcool 70%.',
+          '+30 min: Auditoria de geladeiras e freezers — verificar etiquetas e validades; separar imediatamente qualquer item sem identificação.',
+          '2h antes de abrir: Abastecer o rechaud com água limpa, ligar o aquecimento e verificar a temperatura mínima de 70°C.',
+          '2h antes de abrir: Organizar as preparações base no rechaud (arroz branco, feijão preto, baião de dois, vatapá, maniçoba, arroz paraense).',
+          '90 min antes: Mise en place de guarnições — cebola em rodelas, limão em meia-lua, vinagrete em cubos, farofa crocante e brunoise fina.',
+          '60 min antes: Pré-preparo de proteínas e insumos amazônicos — dessalgue e limpeza de camarão, catação de jambu, aquecimento de tucupi, porcionamento de carnes.',
+          '30 min antes: Etiquetagem de 100% das cubas de mise en place com a Etiqueta Universal (data/hora, validade, executor e conferente).',
+          'Antes de abrir: Auxiliar o Cozinheiro Líder na conferência final e assinatura da prancheta F-01 de Abertura.'
         ]
       },
       {
-        phase: '2. Serviço de Pico e Atendimento (11h00 - 15h00 / 18h00 - 22h00)',
-        timeRange: '11h00 às 15h00 e 18h00 às 22h00',
+        phase: '2. Serviço ao público',
+        timeRange: 'Sáb–Dom 12h00–23h30 (almoço e jantar) · Qua–Sex 18h00/18h30–23h00 (jantar)',
         tasks: [
-          'Monitorar o nível das cubas do rechaud e realizar a reposição imediata antes de atingir o nível crítico.',
+          'Monitorar o nível das cubas do rechaud e repor imediatamente antes de atingir o nível crítico.',
           'Operar a fritadeira (bolinhos de tacacá, macaxeira frita, dadinhos de tapioca, iscas de peixe) seguindo os tempos de ficha técnica.',
           'Manter a bancada de apoio limpa e seca a todo momento durante os pedidos.',
           'Lavar panelas, cubas vazias e utensílios continuamente, evitando acúmulo de louça suja no tanque.',
-          'Trocar o saco de lixo das lixeiras de pedal quando atingirem 2/3 da capacidade e higienizar as mãos imediatamente após.',
+          'Trocar o saco de lixo das lixeiras de pedal ao atingir 2/3 da capacidade e higienizar as mãos imediatamente após.',
+          'Aos sábados e domingos: reforço de mise en place na virada do almoço para o jantar, sem parar o serviço.',
           'Registrar descartes ou sobras imprevistas na prancheta F-02 de Registro de Perdas.'
         ]
       },
       {
-        phase: '3. Fechamento e Encerramento (15h00 ou Pós-Serviço)',
-        timeRange: '15h00 às 15h20 / Fechamento Noturno',
+        phase: '3. Fechamento e encerramento (após o último cliente)',
+        timeRange: 'Sáb–Dom a partir das 23h30 · Qua–Sex a partir das 23h00',
         tasks: [
           'Transferir preparações remanescentes do rechaud para recipientes higienizados menores.',
           'Aplicar nova Etiqueta Universal em todas as sobras com data/hora de fechamento e nova validade sob refrigeração.',
@@ -132,7 +133,7 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
     cboCode: '5135-05 / 5134-05 (Cozinheiro Geral / Chef de Partida)',
     directSupervisor: 'Gestão Operacional e Diretoria',
     subordinates: 'Auxiliar de Cozinha, Ajudantes e Estagiários de Cozinha',
-    workingShift: 'Turno Integral / Escala Operacional',
+    workingShift: 'Entra ~3h antes de abrir junto com a cozinha · Sáb–Dom serviço 12h00–23h30 · Qua–Sex serviço 18h00/18h30–23h00. Fechado seg e ter.',
     summary: 'Responsável técnico pelo padrão de sabor, apresentação dos pratos, controle rigoroso das Fichas Técnicas, gestão do tempo de saída das comandas, liderança do time da cozinha e validação dos checklists diários F-01 e F-02.',
     keyResponsibilities: [
       'Comandar a linha de cocção, finalização e montagem de 100% dos pratos do cardápio conforme as Fichas Técnicas.',
@@ -144,8 +145,8 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
     ],
     shiftRoutine: [
       {
-        phase: '1. Abertura & Validação Técnica',
-        timeRange: '08h00 às 11h00',
+        phase: '1. Pré-preparo & Validação Técnica (antes de abrir)',
+        timeRange: 'Sáb–Dom 09h00–12h00 · Qua–Sex 15h30–18h00',
         tasks: [
           'Conferência dos caldeirões de bases paraenses (maniçoba em fervura, tucupi aferventado com alho e chicória, vatapá).',
           'Auditoria do mise en place montado pelo Auxiliar de Cozinha.',
@@ -153,8 +154,8 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
         ]
       },
       {
-        phase: '2. Serviço de Pico',
-        timeRange: '11h00 às 15h00 e 18h00 às 22h30',
+        phase: '2. Serviço ao público',
+        timeRange: 'Sáb–Dom 12h00–23h30 · Qua–Sex 18h00/18h30–23h00',
         tasks: [
           'Comando das comandas da cozinha e distribuição de tarefas.',
           'Cocção das proteínas grelhadas, fritas ou cozidas no ponto exato.',
@@ -200,7 +201,7 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
     cboCode: '4141-05 (Almoxarife / Estoquista)',
     directSupervisor: 'Gestão Operacional e Compras',
     subordinates: 'Ajudantes de Carga / Descarga',
-    workingShift: 'Manhã (07h00 às 16h00)',
+    workingShift: 'Recebe fornecedores pela manhã/tarde e prepara o estoque antes do serviço. Fechado seg e ter.',
     summary: 'Responsável pelo recebimento qualificado de mercadorias no ato da entrega (com balança e termômetro), conferência de notas fiscais, organização e controle do estoque seco e refrigerado, aplicação do PEPS e monitoramento do Termômetro de Ruptura.',
     keyResponsibilities: [
       'Receber fornecedores conferindo peso na balança, temperatura de congelados e integridade de embalagens.',
@@ -212,8 +213,8 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
     ],
     shiftRoutine: [
       {
-        phase: '1. Manhã: Recebimento e Conferência',
-        timeRange: '07h00 às 11h00',
+        phase: '1. Recebimento e Conferência',
+        timeRange: 'Manhã / início da tarde (antes do serviço)',
         tasks: [
           'Conferência física com balança de pescados, carnes e hortifrúti.',
           'Conferência de validade da nota fiscal e rejeição de itens avariados.',
@@ -221,8 +222,8 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
         ]
       },
       {
-        phase: '2. Tarde: Organização e PEPS',
-        timeRange: '11h00 às 14h00',
+        phase: '2. Organização e PEPS',
+        timeRange: 'Antes de abrir as portas',
         tasks: [
           'Abastecimento dos estoques operacionais da cozinha e salão.',
           'Garantia do alinhamento PEPS nas prateleiras.',
@@ -231,7 +232,7 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
       },
       {
         phase: '3. Fim do Turno: Inventário & Compras',
-        timeRange: '14h00 às 16h00',
+        timeRange: 'Fim do expediente do estoque',
         tasks: [
           'Lançamento de baixas e contagem de itens de alto giro.',
           'Emissão do Relatório de Itens em Nível Mínimo para o setor de Compras.'
@@ -264,7 +265,7 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
     cboCode: '5134-05 (Garçom / Atendente de Restaurante)',
     directSupervisor: 'Gestão Operacional',
     subordinates: 'Cumins, Auxiliares de Salão e Ajudantes',
-    workingShift: 'Almoço e Jantar (Conforme escala de turnos)',
+    workingShift: 'Sáb–Dom 12h00–23h30 (almoço e jantar) · Qua–Sex 18h00/18h30–23h00 (jantar). Entra ~1h antes para abrir o salão. Fechado seg e ter.',
     summary: 'Responsável pela recepção calorosa e acolhedora dos clientes no autêntico padrão paraense, organização impecável do salão e mesas, anotação e transmissão precisa dos pedidos à cozinha, serviço de mesa ágil e garantia de uma experiência gastronômica memorável.',
     keyResponsibilities: [
       'Receber os clientes com cordialidade, sorriso e apresentação do conceito gastronômico paraense.',
@@ -277,7 +278,7 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
     shiftRoutine: [
       {
         phase: '1. Abertura do Salão',
-        timeRange: '10h00 às 11h30',
+        timeRange: '~1h antes de abrir',
         tasks: [
           'Limpeza e sanitização de mesas e cadeiras com álcool 70%.',
           'Alinhamento de galheteiros, farinheiras, pimentas da casa e guardanapos.',
@@ -286,7 +287,7 @@ export const JOB_ROLES_DATA: JobRoleDescriptor[] = [
       },
       {
         phase: '2. Atendimento ao Cliente',
-        timeRange: '11h30 às 15h30 e 18h30 às 23h00',
+        timeRange: 'Sáb–Dom 12h00–23h30 · Qua–Sex 18h00/18h30–23h00',
         tasks: [
           'Acolhimento na porta, acomodação e entrega de cardápios.',
           'Sugestão de entradas regionais (bolinho de tacacá, dadinho de tapioca, sucos regionais).',

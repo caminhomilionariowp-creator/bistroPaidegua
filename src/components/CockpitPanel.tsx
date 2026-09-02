@@ -43,6 +43,7 @@ import {
 } from '../data/cockpitData';
 import { loadStock, stockLevel, needsPurchase } from '../data/stockData';
 import { traceSummary } from '../data/traceabilityData';
+import { scheduleFor, todayScheduleLabel, OPEN_DAYS_LABEL, currentTurnPhase } from '../data/scheduleData';
 import { Gauge, MiniBar } from './Gauge';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
 import { CharacterAvatar } from './Characters';
@@ -133,6 +134,8 @@ export const CockpitPanel: React.FC<CockpitPanelProps> = ({
   const stockRuptura = stockItems.filter((i) => stockLevel(i) === 'ruptura').length;
   const stockNoGatilho = stockItems.filter(needsPurchase).length;
   const trace = useMemo(() => traceSummary(), []);
+  const sched = useMemo(() => scheduleFor(), []);
+  const turnPhase = useMemo(() => currentTurnPhase(), []);
 
   const todayOcc = occurrences.filter((o) => o.date === today);
   const rupturasHoje = todayOcc.filter((o) => o.type === 'ruptura');
@@ -292,6 +295,32 @@ export const CockpitPanel: React.FC<CockpitPanelProps> = ({
                 <span className="hidden sm:inline">Imprimir</span>
               </button>
             </div>
+          </div>
+
+          {/* Funcionamento de hoje */}
+          <div
+            className={`rounded-xl px-3.5 py-2.5 text-xs flex flex-wrap items-center gap-x-3 gap-y-1 border ${
+              sched.open
+                ? turnPhase === 'servico'
+                  ? 'bg-emerald-950/70 border-emerald-700 text-emerald-100'
+                  : 'bg-stone-800/70 border-stone-700 text-stone-200'
+                : 'bg-rose-950/60 border-rose-800 text-rose-200'
+            }`}
+          >
+            <span className="text-base leading-none">🕒</span>
+            <span className="font-bold">{todayScheduleLabel()}</span>
+            {sched.open && (
+              <span className="font-mono text-[11px] opacity-80">
+                {turnPhase === 'pre_preparo'
+                  ? '• agora: pré-preparo'
+                  : turnPhase === 'servico'
+                    ? '• agora: serviço ao público'
+                    : turnPhase === 'fechamento'
+                      ? '• agora: fechamento'
+                      : '• fora do horário de operação'}
+              </span>
+            )}
+            <span className="text-[11px] opacity-70 w-full sm:w-auto sm:ml-auto">{OPEN_DAYS_LABEL}</span>
           </div>
 
           {/* Linha do tempo das 5 fases */}

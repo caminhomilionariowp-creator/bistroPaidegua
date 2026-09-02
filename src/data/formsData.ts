@@ -10,7 +10,7 @@ export const FORMS_DATA: OperationalForm[] = [
     frequency: "Diário por Turno",
     fields: [
       { id: "date", label: "Data", type: "text", placeholder: "DD/MM/AAAA", width: "third" },
-      { id: "shift", label: "Turno", type: "select", options: ["Almoço", "Jantar", "Integral"], width: "third" },
+      { id: "shift", label: "Turno", type: "select", options: ["Pré-preparo", "Serviço", "Fechamento"], width: "third" },
       { id: "leader", label: "Cozinheiro Líder", type: "text", placeholder: "Nome do Cozinheiro", width: "third" }
     ],
     tableTemplate: {
@@ -125,7 +125,7 @@ export const FORMS_DATA: OperationalForm[] = [
     frequency: "Diário por Turno",
     fields: [
       { id: "date", label: "Data", type: "text", placeholder: "DD/MM/AAAA", width: "third" },
-      { id: "shift", label: "Turno", type: "select", options: ["Almoço", "Jantar", "Integral"], width: "third" },
+      { id: "shift", label: "Turno", type: "select", options: ["Pré-preparo", "Serviço", "Fechamento"], width: "third" },
       { id: "cashier", label: "Operador de Caixa", type: "text", placeholder: "Nome do Operador", width: "third" }
     ],
     tableTemplate: {
@@ -153,7 +153,7 @@ export const FORMS_DATA: OperationalForm[] = [
     frequency: "Diário por Turno",
     fields: [
       { id: "date", label: "Data", type: "text", placeholder: "DD/MM/AAAA", width: "third" },
-      { id: "shift", label: "Turno", type: "select", options: ["Almoço", "Jantar"], width: "third" },
+      { id: "shift", label: "Turno", type: "select", options: ["Serviço", "Fechamento"], width: "third" },
       { id: "waiter", label: "Líder de Salão", type: "text", placeholder: "Nome do Garçom Líder", width: "third" }
     ],
     tableTemplate: {

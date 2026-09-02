@@ -23,8 +23,8 @@ export const POSTERS_DATA: PosterSlide[] = [
           phases: [
             {
               number: "Fase 1",
-              title: "Abertura (Manhã)",
-              time: "08h00 às 11h00",
+              title: "Pré-preparo (antes de abrir)",
+              time: "Sáb–Dom 09h · Qua–Sex 15h30",
               color: "border-emerald-500 bg-emerald-50/70 text-emerald-950",
               badgeColor: "bg-emerald-600 text-white",
               icon: "Sun",
@@ -37,8 +37,8 @@ export const POSTERS_DATA: PosterSlide[] = [
             },
             {
               number: "Fase 2",
-              title: "Serviço (Pico)",
-              time: "11h00 às 15h00 / 18h00 às 22h00",
+              title: "Serviço ao público",
+              time: "Sáb–Dom 12h–23h30 · Qua–Sex 18h–23h",
               color: "border-amber-500 bg-amber-50/70 text-amber-950",
               badgeColor: "bg-amber-600 text-white",
               icon: "Flame",
@@ -51,8 +51,8 @@ export const POSTERS_DATA: PosterSlide[] = [
             },
             {
               number: "Fase 3",
-              title: "Fechamento (Noite)",
-              time: "22h00 às 00h00",
+              title: "Fechamento (pós-serviço)",
+              time: "Após o último cliente",
               color: "border-blue-500 bg-blue-50/70 text-blue-950",
               badgeColor: "bg-blue-600 text-white",
               icon: "Moon",

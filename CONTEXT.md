@@ -13,6 +13,24 @@
 - **Projeto independente.** Não compartilha código, banco, repo ou deploy com o ELEVO
   nem com a Atrium.
 
+## 1.1 Horário de funcionamento (real, confirmado pelo usuário 02/09/2026)
+
+| Dia | Ao público | Tipo |
+|---|---|---|
+| Segunda / Terça | **fechado** | — |
+| Quarta | 18h30–23h00 | só jantar |
+| Quinta | 18h00–23h00 | só jantar |
+| Sexta | 18h30–23h00 | só jantar |
+| Sábado | 12h00–23h30 | almoço + jantar contínuo |
+| Domingo | 12h00–23h30 | almoço + jantar contínuo |
+
+A cozinha entra **~3h antes de abrir** para o pré-preparo (Sáb–Dom ~09h, Qua–Sex ~15h30).
+Fonte no código: `src/data/scheduleData.ts` (`WEEK_SCHEDULE`, `scheduleFor`, `currentTurnPhase`,
+`todayScheduleLabel`). O Painel do Dia 1 mostra o funcionamento do dia + fase atual do turno.
+As rotinas em `jobRolesData.ts`, `masterDossierData.ts` (§1, §5.1, §6) e `postersData.ts`
+foram atualizadas de "abertura de manhã / almoço / jantar com intervalo" para
+**Pré-preparo → Serviço ao público → Fechamento**.
+
 ## 2. Visão
 
 Levar a operação do **Degrau 1** (pessoas, memória e improviso) ao **Degrau 2**
