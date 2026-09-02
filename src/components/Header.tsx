@@ -2,23 +2,11 @@ import React from 'react';
 import {
   Printer,
   Sparkles,
-  BookOpen,
-  Layers,
-  FileText,
-  Tag,
-  ChefHat,
-  Palette,
-  CheckCircle2,
-  Users,
-  Smartphone,
-  CheckSquare,
   KeyRound,
-  ShieldCheck,
-  User,
   Gauge,
   HardHat,
   Thermometer,
-  Tags
+  Tags,
 } from 'lucide-react';
 import { DocumentCategory, EmployeeAccount } from '../types';
 import { CharacterAvatar } from './Characters';
@@ -64,43 +52,33 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between h-16 gap-3">
           
           {/* Official Brand Logo & Document Context */}
-          <div className="flex items-center space-x-3 shrink-0">
-            <button 
-              onClick={() => onSelectCategory('dossier')} 
-              className="flex items-center text-left group bg-stone-950/80 hover:bg-stone-950 px-2.5 py-1.5 rounded-xl border border-stone-800 hover:border-red-600/50 transition-all cursor-pointer shadow-sm"
-              title="Ir para o Início / Dossiê Mestre"
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <button
+              onClick={() => onSelectCategory('painel')}
+              className="flex items-center text-left group bg-stone-950/80 hover:bg-stone-950 px-2.5 py-1.5 rounded-xl border border-stone-800 hover:border-red-600/50 transition-all cursor-pointer shadow-sm shrink-0"
+              title="Ir para o Painel do Dia 1"
             >
               <BrandLogo variant="horizontal" size="sm" theme="dark" />
             </button>
-            
-            <div className="hidden sm:block border-l border-stone-800 pl-3">
-              <div className="flex items-center space-x-2">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                  Manual Operacional v1.1
-                </span>
-              </div>
-              <p className="text-xs text-stone-300 font-semibold truncate max-w-xs md:max-w-sm">
+
+            <div className="hidden md:block border-l border-stone-800 pl-3 min-w-0">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shrink-0" />
+                Manual Operacional v1.1
+              </span>
+              <p className="text-xs text-stone-300 font-semibold truncate">
                 {documentTitle}
               </p>
             </div>
           </div>
 
-          {/* Quick Category Tabs Navigation - Dossier as First Item */}
-          <nav className="hidden lg:flex items-center space-x-1 overflow-x-auto py-1 scrollbar-none">
+          {/* Atalhos dos módulos vivos — a lista completa está sempre na barra lateral */}
+          <nav className="hidden xl:flex items-center gap-1 shrink-0">
             {[
-              { id: 'painel', label: '📊 Painel do Dia 1', icon: Gauge, highlight: true },
-              { id: 'posto', label: '🧑‍🍳 Posto', icon: HardHat, highlight: true },
-              { id: 'estoque', label: '🌡️ Estoque', icon: Thermometer, highlight: true },
-              { id: 'rastreabilidade', label: '🏷️ Rastreabilidade', icon: Tags, highlight: true },
-              { id: 'dossier', label: '📖 Dossiê Mestre', icon: BookOpen },
-              { id: 'posters', label: 'Cartazes A3', icon: Layers },
-              { id: 'checklists', label: 'Checklists', icon: CheckSquare },
-              { id: 'team', label: 'Equipe', icon: Users },
-              { id: 'pops', label: 'POPs', icon: FileText },
-              { id: 'forms', label: 'Formulários', icon: CheckCircle2 },
-              { id: 'labels', label: 'Etiquetas', icon: Tag },
-              { id: 'recipes', label: 'Fichas', icon: ChefHat },
+              { id: 'painel', label: 'Painel', icon: Gauge },
+              { id: 'posto', label: 'Posto', icon: HardHat },
+              { id: 'estoque', label: 'Estoque', icon: Thermometer },
+              { id: 'rastreabilidade', label: 'Rastreab.', icon: Tags },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = currentCategory === tab.id;
@@ -108,12 +86,10 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   key={tab.id}
                   onClick={() => onSelectCategory(tab.id as DocumentCategory)}
-                  className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     isActive
                       ? 'bg-red-600 text-white shadow-md ring-1 ring-white/20'
-                      : tab.highlight
-                      ? 'bg-stone-800 text-amber-300 hover:text-white hover:bg-stone-750 border border-amber-500/30'
-                      : 'text-stone-300 hover:text-white hover:bg-stone-800'
+                      : 'bg-stone-800/70 text-amber-300 hover:text-white hover:bg-stone-700 border border-amber-500/25'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -124,7 +100,7 @@ export const Header: React.FC<HeaderProps> = ({
           </nav>
 
           {/* Action Buttons & Employee Profile Switcher */}
-          <div className="flex items-center space-x-2.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             
             {/* Active Employee Access Pill */}
             <button
