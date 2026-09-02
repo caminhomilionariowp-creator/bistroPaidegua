@@ -13,7 +13,6 @@ import {
   Wrench,
   HardHat,
   ChevronRight,
-  Star,
 } from 'lucide-react';
 import {
   ResponsibleLeader,
@@ -63,9 +62,10 @@ export const RoleStation: React.FC<RoleStationProps> = ({
 }) => {
   const date = todayISO();
 
-  // Abre sempre no posto da Auxiliar de Cozinha (pilar da operação);
-  // troca automaticamente quando um colaborador com cargo definido faz login.
-  const [roleId, setRoleId] = useState<string>('auxiliar-cozinha');
+  // Abre no posto do colaborador logado; troca ao logar outro com cargo definido.
+  const [roleId, setRoleId] = useState<string>(
+    () => currentEmployee?.roleId || 'cozinheiro-lider',
+  );
   const lastEmpRef = useRef<string | undefined>(currentEmployee?.id);
   useEffect(() => {
     if (currentEmployee?.id !== lastEmpRef.current) {
@@ -232,15 +232,6 @@ export const RoleStation: React.FC<RoleStationProps> = ({
               >
                 <span className="text-base leading-none">{m?.icon}</span>
                 <span>{m?.short || r.title}</span>
-                {m?.isPillar && (
-                  <span
-                    className={`text-[9px] font-black px-1.5 py-0.5 rounded flex items-center gap-0.5 ${
-                      active ? 'bg-amber-400 text-stone-950' : 'bg-amber-100 text-amber-800'
-                    }`}
-                  >
-                    <Star className="w-2.5 h-2.5" /> PILAR
-                  </span>
-                )}
               </button>
             );
           })}
@@ -266,17 +257,21 @@ export const RoleStation: React.FC<RoleStationProps> = ({
                   <span className="bg-white/15 text-white text-[10px] px-2 py-0.5 rounded font-mono font-bold">
                     {role.cboCode}
                   </span>
-                  {meta.isPillar && (
-                    <span className="bg-amber-400 text-stone-950 text-[10px] px-2 py-0.5 rounded font-black uppercase tracking-wider">
-                      Pilar da segurança dos alimentos
-                    </span>
-                  )}
+                  <span className="bg-white/10 text-stone-200 text-[10px] px-2 py-0.5 rounded font-medium">
+                    {meta.focusArea}
+                  </span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-2">
                   <span>{meta.icon}</span> {role.title}
                 </h1>
                 <p className="text-xs text-stone-300">
-                  Setor <strong>{role.department}</strong> • Reporta a <strong>{role.directSupervisor}</strong>
+                  Setor <strong>{role.department}</strong>
+                </p>
+                <p className="text-xs text-stone-300">
+                  Reporta a <strong>{role.directSupervisor}</strong>
+                  {role.subordinates && !role.subordinates.toLowerCase().includes('não') && (
+                    <> • Coordena <strong>{role.subordinates}</strong></>
+                  )}
                 </p>
                 <p className="text-xs text-stone-300">
                   Jornada: <strong>{role.workingShift}</strong>

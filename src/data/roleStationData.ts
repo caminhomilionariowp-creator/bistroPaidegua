@@ -12,7 +12,8 @@ export interface RoleStationMeta {
   chipClass: string;
   ringClass: string;
   short: string;
-  isPillar?: boolean;
+  /** o que o posto responde — descrição, não hierarquia */
+  focusArea: string;
 }
 
 export const ROLE_STATION_META: Record<string, RoleStationMeta> = {
@@ -24,7 +25,7 @@ export const ROLE_STATION_META: Record<string, RoleStationMeta> = {
     chipClass: 'bg-amber-100 text-amber-900 border-amber-300',
     ringClass: 'ring-amber-400/40',
     short: 'Auxiliar de Cozinha',
-    isPillar: true,
+    focusArea: 'Mise en place, etiquetagem obrigatória e higiene do posto',
   },
   'cozinheiro-lider': {
     avatarId: 'chef_manel',
@@ -34,6 +35,7 @@ export const ROLE_STATION_META: Record<string, RoleStationMeta> = {
     chipClass: 'bg-emerald-100 text-emerald-900 border-emerald-300',
     ringClass: 'ring-emerald-400/40',
     short: 'Cozinheiro Líder',
+    focusArea: 'Padrão de sabor, fichas técnicas e comando da linha',
   },
   'estoquista-almoxarife': {
     avatarId: 'ze_estoque',
@@ -43,6 +45,7 @@ export const ROLE_STATION_META: Record<string, RoleStationMeta> = {
     chipClass: 'bg-blue-100 text-blue-900 border-blue-300',
     ringClass: 'ring-blue-400/40',
     short: 'Encarregado de Estoque',
+    focusArea: 'Recebimento técnico, PEPS e prevenção de ruptura',
   },
   'atendente-garcom': {
     avatarId: 'dona_flor',
@@ -52,6 +55,7 @@ export const ROLE_STATION_META: Record<string, RoleStationMeta> = {
     chipClass: 'bg-rose-100 text-rose-900 border-rose-300',
     ringClass: 'ring-rose-400/40',
     short: 'Líder de Salão',
+    focusArea: 'Hospitalidade, fluxo de mesas e retorno de pedidos',
   },
   'operador-caixa': {
     avatarId: 'camila_caixa',
@@ -61,6 +65,7 @@ export const ROLE_STATION_META: Record<string, RoleStationMeta> = {
     chipClass: 'bg-teal-100 text-teal-900 border-teal-300',
     ringClass: 'ring-teal-400/40',
     short: 'Operador de Caixa',
+    focusArea: 'Blindagem financeira e conferência cega de caixa',
   },
 };
 

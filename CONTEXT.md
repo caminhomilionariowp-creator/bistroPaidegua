@@ -62,8 +62,9 @@ POPs (POP-01..05), Formulários (F-01..06), Etiquetas Universais, Fichas Técnic
 
 ### Adicionado — Posto de Trabalho (2026-09-01, mesma sessão)
 - **`src/components/RoleStation.tsx`** + **`src/data/roleStationData.ts`**: cockpit
-  visual de posto de trabalho para os 5 cargos (§5, §5.1, §6, §7). Abre sempre na
-  **Auxiliar de Cozinha** (pilar) e troca ao logar um colaborador com cargo.
+  visual de posto de trabalho para os 5 cargos (§5, §5.1, §6, §7). Abre no posto do
+  colaborador logado (`roleId`); fallback Cozinheiro Líder. Sem selo de "pilar" —
+  cada posto mostra sua área de responsabilidade e a quem reporta.
   - Hero com missão, CBO, jornada e anel de progresso do turno.
   - **Paramentação/EPI** como portão de entrada (checklist persistido:
     `bistro_posto_epi_<roleId>_<data>`), "posto liberado" ao completar.
