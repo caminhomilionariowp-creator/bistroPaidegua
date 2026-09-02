@@ -163,6 +163,11 @@
   100% { background-position: 200% 0; }
 }
 
+@keyframes drawer-in {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
 @media screen {
   .animate-fade-in { animation: fade-in 0.35s ease-out both; }
   .animate-slide-up { animation: slide-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
@@ -186,6 +191,8 @@
 
   .gauge-arc { animation: gauge-sweep 1.1s cubic-bezier(0.22, 1, 0.36, 1) both; }
   .bar-grow { transform-origin: left center; animation: bar-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  /* entrada do menu lateral no mobile — sem fill-mode: se travar, o repouso é a posição 0 */
+  .animate-drawer-in { animation: drawer-in 0.22s ease-out; }
 
   .skeleton {
     background: linear-gradient(90deg, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.10) 37%, rgba(0,0,0,0.05) 63%);

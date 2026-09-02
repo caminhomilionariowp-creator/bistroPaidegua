@@ -100,8 +100,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <aside
         className={`no-print bg-white border-r border-stone-200 flex-col overflow-y-auto
           fixed top-0 left-0 z-50 w-[86vw] max-w-xs h-full shadow-2xl
-          lg:flex lg:sticky lg:top-16 lg:z-auto lg:w-72 lg:max-w-none lg:h-[calc(100vh-4rem)] lg:shadow-none
-          ${isOpen ? 'flex' : 'hidden'}`}
+          lg:flex lg:sticky lg:top-16 lg:z-auto lg:w-72 lg:max-w-none lg:h-[calc(100vh-4rem)] lg:shadow-none lg:animate-none
+          ${isOpen ? 'flex animate-drawer-in' : 'hidden'}`}
       >
 
       {/* Brand Identity Header in Sidebar */}
