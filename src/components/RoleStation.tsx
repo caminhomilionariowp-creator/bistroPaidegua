@@ -538,10 +538,10 @@ export const RoleStation: React.FC<RoleStationProps> = ({
               ))}
             </div>
             <button
-              onClick={() => onNavigate?.('labels')}
+              onClick={() => onNavigate?.('rastreabilidade')}
               className="mt-3 text-[11px] font-bold text-blue-700 hover:text-blue-900 flex items-center gap-1 cursor-pointer no-print"
             >
-              Abrir gerador de etiquetas <ChevronRight className="w-3 h-3" />
+              Abrir rastreabilidade <ChevronRight className="w-3 h-3" />
             </button>
           </div>
         </div>

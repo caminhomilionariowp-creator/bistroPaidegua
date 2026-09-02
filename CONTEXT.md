@@ -109,6 +109,29 @@ POPs (POP-01..05), Formulários (F-01..06), Etiquetas Universais, Fichas Técnic
   também itens zerados / no gatilho e leva ao módulo Estoque.
 - Nav em Header e Sidebar; categoria `'estoque'`.
 
+### Adicionado — Rastreabilidade Universal (2026-09-01, mesma sessão)
+- **`src/components/TraceabilityRegistry.tsx`** + **`src/data/traceabilityData.ts`** (§7):
+  - Cada etiqueta gerada vira um **lote** (`TraceLot`) com produto, porção,
+    quantidade, preparo, validade, executor, conferente, endereço PEPS e status
+    (`ativo | consumido | descartado`).
+  - `SHELF_LIFE`: vida útil padrão (horas) de ~16 preparos do Bistrô — ao escolher
+    o produto, a validade é calculada sozinha (editável).
+  - **Painel de validade**: 4 cards (Vencido / ≤24h / Vence hoje / No prazo),
+    contagem regressiva viva por lote (`humanizeExpiry`, atualiza a cada 60 s),
+    barra de "vida consumida" do lote.
+  - Ações por lote: **Consumido**, **Descartar** (modal com motivo padronizado +
+    checkbox "registrar como perda") e **Etiqueta** (imprime a Etiqueta Universal).
+  - **Descarte com "registrar perda" cria uma `OperationalOccurrence` tipo `perda`**
+    no `cockpitData` → aparece direto no Painel do Dia 1. Loop fechado.
+  - Histórico de consumidos/descartados com motivo.
+  - Alerta de validade copiável para WhatsApp. Persistência:
+    `bistro_pai_degua_rastreabilidade_v1`.
+- **Painel do Dia 1**: nova faixa de alerta quando há lotes vencidos / vencendo,
+  com link para o módulo (`traceSummary()`).
+- RoleStation da Auxiliar: link "Abrir etiquetas" agora vai para a Rastreabilidade.
+- O módulo antigo **Etiquetas Universais** (`labels`) continua como gerador de
+  folha A4 para pré-impressão em branco.
+
 ## 7. Próximos passos sugeridos (mapa de aderência ao dossiê)
 
 1. Módulo de **Estoque / Termômetro de Ruptura** (§8) — níveis ideal/mínimo/crítico

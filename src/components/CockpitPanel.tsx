@@ -42,6 +42,7 @@ import {
   DIA1_INDICATORS,
 } from '../data/cockpitData';
 import { loadStock, stockLevel, needsPurchase } from '../data/stockData';
+import { traceSummary } from '../data/traceabilityData';
 import { Gauge, MiniBar } from './Gauge';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
 import { CharacterAvatar } from './Characters';
@@ -131,6 +132,7 @@ export const CockpitPanel: React.FC<CockpitPanelProps> = ({
   const stockItems = useMemo(() => loadStock(), []);
   const stockRuptura = stockItems.filter((i) => stockLevel(i) === 'ruptura').length;
   const stockNoGatilho = stockItems.filter(needsPurchase).length;
+  const trace = useMemo(() => traceSummary(), []);
 
   const todayOcc = occurrences.filter((o) => o.date === today);
   const rupturasHoje = todayOcc.filter((o) => o.type === 'ruptura');
@@ -374,6 +376,24 @@ export const CockpitPanel: React.FC<CockpitPanelProps> = ({
           <Check className="w-4 h-4" />
           {toast}
         </div>
+      )}
+
+      {(trace.vencidos > 0 || trace.hoje > 0 || trace.proximos > 0) && (
+        <button
+          onClick={() => onNavigate?.('rastreabilidade')}
+          className="w-full text-left bg-amber-50 border border-amber-300 rounded-xl px-4 py-3 text-xs text-amber-950 flex items-center gap-2 hover:bg-amber-100 transition-colors cursor-pointer"
+        >
+          <span className="text-base">🏷️</span>
+          <span>
+            Rastreabilidade:{' '}
+            {trace.vencidos > 0 && <strong>{trace.vencidos} vencido(s)</strong>}
+            {trace.vencidos > 0 && (trace.hoje > 0 || trace.proximos > 0) && ' • '}
+            {trace.hoje > 0 && <>{trace.hoje} vence(m) hoje</>}
+            {trace.hoje > 0 && trace.proximos > 0 && ' • '}
+            {trace.proximos > 0 && <>{trace.proximos} em ≤24h</>}
+            . Conferir os lotes antes de abrir.
+          </span>
+        </button>
       )}
 
       {/* ============ KPIs PRINCIPAIS ============ */}

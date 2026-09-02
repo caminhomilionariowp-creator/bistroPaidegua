@@ -2,6 +2,7 @@ export type DocumentCategory =
   | 'painel'
   | 'posto'
   | 'estoque'
+  | 'rastreabilidade'
   | 'dossier'
   | 'posters'
   | 'checklists'
@@ -53,6 +54,28 @@ export interface StockItem {
   lastCountBy?: string;
   purchaseTriggeredAt?: string; // ISO — pedido disparado
   notes?: string;
+}
+
+/* ===== Rastreabilidade Universal — lotes com validade (Dossiê §7) ===== */
+
+export type TraceStatus = 'ativo' | 'consumido' | 'descartado';
+
+export interface TraceLot {
+  id: string;
+  product: string;
+  complement?: string;      // porção / corte / lote
+  category: string;
+  quantity?: string;
+  prepAt: string;           // ISO datetime
+  expiryAt: string;         // ISO datetime
+  executor: string;
+  checker?: string;
+  location?: string;
+  status: TraceStatus;
+  closedAt?: string;
+  closedBy?: string;
+  discardReason?: string;
+  loggedAsLoss?: boolean;   // descarte já virou ocorrência de perda no Painel
 }
 
 export type PrincipleSignal = 'verde' | 'amarelo' | 'vermelho' | 'auto';
