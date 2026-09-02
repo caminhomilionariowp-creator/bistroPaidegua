@@ -3,6 +3,7 @@ import { ResponsibleLeader, EmployeeAccount } from '../types';
 export const DEFAULT_EMPLOYEES: EmployeeAccount[] = [
   {
     id: 'emp-manel',
+    roleId: 'cozinheiro-lider',
     name: 'Chef Manoel (Manel)',
     role: 'Líder de Cozinha & Segurança dos Alimentos',
     primarySector: 'cozinha',
@@ -19,6 +20,7 @@ export const DEFAULT_EMPLOYEES: EmployeeAccount[] = [
   },
   {
     id: 'emp-ze',
+    roleId: 'estoquista-almoxarife',
     name: 'José Carlos (Zé do Estoque)',
     role: 'Encarregado de Estoque & Conferência',
     primarySector: 'estoque',
@@ -35,6 +37,7 @@ export const DEFAULT_EMPLOYEES: EmployeeAccount[] = [
   },
   {
     id: 'emp-flor',
+    roleId: 'atendente-garcom',
     name: 'Dona Florinda (Dona Flor)',
     role: 'Líder de Salão & Atendimento Pai d\'Égua',
     primarySector: 'salao',
@@ -51,6 +54,7 @@ export const DEFAULT_EMPLOYEES: EmployeeAccount[] = [
   },
   {
     id: 'emp-camila',
+    roleId: 'operador-caixa',
     name: 'Camila Santos',
     role: 'Operadora Líder de Caixa & Fechamento',
     primarySector: 'caixa',
@@ -83,6 +87,7 @@ export const DEFAULT_EMPLOYEES: EmployeeAccount[] = [
   },
   {
     id: 'emp-aux-cozinha',
+    roleId: 'auxiliar-cozinha',
     name: 'Raimundo Nonato (Mundico)',
     role: 'Auxiliar de Cozinha & Mise en Place',
     primarySector: 'cozinha',
@@ -98,6 +103,7 @@ export const DEFAULT_EMPLOYEES: EmployeeAccount[] = [
   },
   {
     id: 'emp-garcom',
+    roleId: 'atendente-garcom',
     name: 'Lucas Pereira',
     role: 'Atendente & Garçom de Salão',
     primarySector: 'salao',
@@ -142,7 +148,12 @@ export const loadEmployees = (): EmployeeAccount[] => {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        // Retrocompatibilidade: backfill de roleId em dados salvos antes do vínculo com JOB_ROLES_DATA.
+        return parsed.map((emp: EmployeeAccount) => {
+          if (emp.roleId) return emp;
+          const seed = DEFAULT_EMPLOYEES.find((d) => d.id === emp.id);
+          return seed?.roleId ? { ...emp, roleId: seed.roleId } : emp;
+        });
       }
     }
   } catch (e) {

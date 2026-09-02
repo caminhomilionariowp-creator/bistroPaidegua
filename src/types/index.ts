@@ -1,5 +1,6 @@
 export type DocumentCategory =
   | 'painel'
+  | 'posto'
   | 'dossier'
   | 'posters'
   | 'checklists'
@@ -88,6 +89,8 @@ export interface EmployeeAccount {
   active?: boolean;
   mainDuty?: string;
   secondaryContact?: string;
+  /** vincula o colaborador ao descritivo oficial em JOB_ROLES_DATA */
+  roleId?: string;
 }
 
 export interface ResponsibleLeader {

@@ -60,6 +60,28 @@ POPs (POP-01..05), Formulários (F-01..06), Etiquetas Universais, Fichas Técnic
 - Painel é a categoria inicial do app; nav em Header e Sidebar.
 - `README.md` e este `CONTEXT.md` criados.
 
+### Adicionado — Posto de Trabalho (2026-09-01, mesma sessão)
+- **`src/components/RoleStation.tsx`** + **`src/data/roleStationData.ts`**: cockpit
+  visual de posto de trabalho para os 5 cargos (§5, §5.1, §6, §7). Abre sempre na
+  **Auxiliar de Cozinha** (pilar) e troca ao logar um colaborador com cargo.
+  - Hero com missão, CBO, jornada e anel de progresso do turno.
+  - **Paramentação/EPI** como portão de entrada (checklist persistido:
+    `bistro_posto_epi_<roleId>_<data>`), "posto liberado" ao completar.
+  - Linha do tempo das 3 fases do turno com todas as tarefas do descritivo,
+    badges de horário, campo de observação, "concluir fase" e progresso.
+  - Só para a Auxiliar: rechaud 70°C (6 cubas), tábuas por cor, os 4 campos da
+    Etiqueta Universal.
+  - Regras de Ouro, "O que NUNCA fazer", como o posto é avaliado, ferramentas.
+  - Relatório do turno para WhatsApp; impressão como prancheta.
+  - **Sincronia:** usa a mesma chave/formato de id que o `SectorChecklist`
+    (`bistro_role_tasks_tracker_<data>` / `rt_<roleId>_p<f>_t<t>`) — marcar tarefa
+    num lugar reflete no outro e alimenta o Painel do Dia 1.
+- **`EmployeeAccount.roleId`** (novo campo) liga o colaborador ao descritivo em
+  `JOB_ROLES_DATA`. `teamData` preenchido; `loadEmployees()` faz backfill de
+  `roleId` em dados salvos antes da mudança.
+- Corrigido bug do `SectorChecklist`: o mapeamento de colaborador→cargo usava ids
+  inexistentes (`emp-chef-manel` etc.); agora usa `currentEmployee.roleId`.
+
 ## 6. Deploy
 
 - **Ainda não publicado.** Alvo: projeto próprio na Vercel na conta `Willianrvc`,

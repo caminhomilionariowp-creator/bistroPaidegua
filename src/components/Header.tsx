@@ -15,7 +15,8 @@ import {
   KeyRound,
   ShieldCheck,
   User,
-  Gauge
+  Gauge,
+  HardHat
 } from 'lucide-react';
 import { DocumentCategory, EmployeeAccount } from '../types';
 import { CharacterAvatar } from './Characters';
@@ -87,6 +88,7 @@ export const Header: React.FC<HeaderProps> = ({
           <nav className="hidden lg:flex items-center space-x-1 overflow-x-auto py-1 scrollbar-none">
             {[
               { id: 'painel', label: '📊 Painel do Dia 1', icon: Gauge, highlight: true },
+              { id: 'posto', label: '🧑‍🍳 Posto', icon: HardHat, highlight: true },
               { id: 'dossier', label: '📖 Dossiê Mestre', icon: BookOpen },
               { id: 'posters', label: 'Cartazes A3', icon: Layers },
               { id: 'checklists', label: 'Checklists', icon: CheckSquare },

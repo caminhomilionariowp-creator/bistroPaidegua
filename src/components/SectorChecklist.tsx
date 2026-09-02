@@ -82,16 +82,9 @@ export const SectorChecklist: React.FC<SectorChecklistProps> = ({
   const [viewMode, setViewMode] = useState<'sector_checklist' | 'role_tasks'>('sector_checklist');
 
   // Selected Role ID for role tasks mode (defaults to Auxiliar de Cozinha or matching logged employee)
-  const [selectedRoleId, setSelectedRoleId] = useState<string>(() => {
-    if (currentEmployee) {
-      if (currentEmployee.id === 'emp-aux-cozinha') return 'auxiliar-cozinha';
-      if (currentEmployee.id === 'emp-chef-manel') return 'cozinheiro-lider';
-      if (currentEmployee.id === 'emp-ze-estoque') return 'estoquista-almoxarife';
-      if (currentEmployee.id === 'emp-dona-flor') return 'atendente-garcom';
-      if (currentEmployee.id === 'emp-camila-caixa') return 'operador-caixa';
-    }
-    return 'auxiliar-cozinha';
-  });
+  const [selectedRoleId, setSelectedRoleId] = useState<string>(
+    () => currentEmployee?.roleId || 'auxiliar-cozinha',
+  );
 
   const [selectedRolePhase, setSelectedRolePhase] = useState<string>('todas');
 
@@ -106,11 +99,7 @@ export const SectorChecklist: React.FC<SectorChecklistProps> = ({
   useEffect(() => {
     if (currentEmployee && currentEmployee.primarySector !== 'gerencia') {
       setSelectedSector(currentEmployee.primarySector);
-      if (currentEmployee.id === 'emp-aux-cozinha') setSelectedRoleId('auxiliar-cozinha');
-      else if (currentEmployee.id === 'emp-chef-manel') setSelectedRoleId('cozinheiro-lider');
-      else if (currentEmployee.id === 'emp-ze-estoque') setSelectedRoleId('estoquista-almoxarife');
-      else if (currentEmployee.id === 'emp-dona-flor') setSelectedRoleId('atendente-garcom');
-      else if (currentEmployee.id === 'emp-camila-caixa') setSelectedRoleId('operador-caixa');
+      if (currentEmployee.roleId) setSelectedRoleId(currentEmployee.roleId);
     }
   }, [currentEmployee?.id]);
 
@@ -168,14 +157,9 @@ export const SectorChecklist: React.FC<SectorChecklistProps> = ({
   const activeRole: JobRoleDescriptor = JOB_ROLES_DATA.find(r => r.id === selectedRoleId) || JOB_ROLES_DATA[0];
 
   // Active assigned employee for active role
-  const activeRoleEmployee = allEmployees.find(e => {
-    if (activeRole.id === 'auxiliar-cozinha' && e.id === 'emp-aux-cozinha') return true;
-    if (activeRole.id === 'cozinheiro-lider' && e.id === 'emp-chef-manel') return true;
-    if (activeRole.id === 'estoquista-almoxarife' && e.id === 'emp-ze-estoque') return true;
-    if (activeRole.id === 'atendente-garcom' && e.id === 'emp-dona-flor') return true;
-    if (activeRole.id === 'operador-caixa' && e.id === 'emp-camila-caixa') return true;
-    return false;
-  }) || (currentEmployee?.primarySector === (activeRole.id === 'auxiliar-cozinha' || activeRole.id === 'cozinheiro-lider' ? 'cozinha' : activeRole.id === 'estoquista-almoxarife' ? 'estoque' : activeRole.id === 'atendente-garcom' ? 'salao' : 'caixa') ? currentEmployee : undefined);
+  const activeRoleEmployee =
+    allEmployees.find(e => e.roleId === activeRole.id && e.active !== false) ||
+    (currentEmployee?.roleId === activeRole.id ? currentEmployee : undefined);
 
   // Extract all routine tasks from current role
   interface ExtractedRoleTask {
