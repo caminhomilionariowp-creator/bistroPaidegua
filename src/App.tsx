@@ -21,6 +21,8 @@ import { loadTeamMembers, saveTeamMembers, loadEmployees, saveEmployees, loadCur
 import { loadChecklistItems, saveChecklistItems } from './data/checklistsData';
 import { RECIPES_DATA } from './data/recipesData';
 import { getPhoto, setPhoto } from './lib/photoStore';
+import { EditModeProvider } from './lib/editMode';
+import { EditModeBar } from './components/EditModeBar';
 import { Printer, Sparkles, BookOpen, Layers, FileText, CheckCircle2, Tag, ChefHat, Palette, Users, CheckSquare } from 'lucide-react';
 
 export default function App() {
@@ -114,7 +116,10 @@ export default function App() {
     }
   };
 
+  const canEditSystem = !!(currentEmployee?.isManager || currentEmployee?.primarySector === 'gerencia');
+
   return (
+    <EditModeProvider canEdit={canEditSystem}>
     <div className="min-h-screen bg-stone-100 flex flex-col overflow-x-hidden selection:bg-emerald-500 selection:text-white">
 
       {/* Top Header */}
@@ -348,6 +353,10 @@ export default function App() {
         onClose={() => setIsAiModalOpen(false)}
       />
 
+      {/* Barra de edição do gestor */}
+      <EditModeBar />
+
     </div>
+    </EditModeProvider>
   );
 }

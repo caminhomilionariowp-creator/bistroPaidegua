@@ -18,6 +18,7 @@ import {
   Maximize2
 } from 'lucide-react';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
+import { Editable } from './Editable';
 
 interface DossierViewerProps {
   onOpenIllustrator?: (photoId: number) => void;
@@ -48,12 +49,8 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
               <span className="text-xs font-mono font-black tracking-widest uppercase text-red-700 bg-red-50 border border-red-200 px-3 py-1 rounded-full">
                 DOCUMENTO VIVO DE GOVERNANÇA
               </span>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-stone-900 tracking-tight mt-3">
-                {MASTER_DOSSIER_HEADER.title}
-              </h1>
-              <h2 className="text-base sm:text-lg font-medium text-stone-600 mt-1">
-                {MASTER_DOSSIER_HEADER.subtitle}
-              </h2>
+              <Editable as="h1" path="dossier.header.title" seed={MASTER_DOSSIER_HEADER.title} className="block text-2xl sm:text-3xl lg:text-4xl font-black text-stone-900 tracking-tight mt-3" />
+              <Editable as="h2" path="dossier.header.subtitle" seed={MASTER_DOSSIER_HEADER.subtitle} className="block text-base sm:text-lg font-medium text-stone-600 mt-1" />
             </div>
           </div>
 
@@ -167,21 +164,29 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
                   <span className="text-xs font-mono font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
                     SEÇÃO {section.number}
                   </span>
-                  <h3 className="text-xl font-bold text-stone-900">{section.title}</h3>
+                  <Editable as="h3" path={`dossier.sec.${section.id}.title`} seed={section.title} className="text-xl font-bold text-stone-900" />
                 </div>
 
                 {section.subtitle && (
-                  <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-4">
-                    {section.subtitle}
-                  </p>
+                  <Editable
+                    as="p"
+                    path={`dossier.sec.${section.id}.subtitle`}
+                    seed={section.subtitle}
+                    className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-4"
+                  />
                 )}
 
                 {/* Paragraphs */}
                 <div className="space-y-3 text-stone-700 text-xs sm:text-sm leading-relaxed mb-5">
                   {section.content.map((p, idx) => (
-                    <p key={idx} className={p.startsWith('•') ? 'pl-4 font-medium' : ''}>
-                      {p}
-                    </p>
+                    <Editable
+                      key={idx}
+                      as="p"
+                      multiline
+                      path={`dossier.sec.${section.id}.content.${idx}`}
+                      seed={p}
+                      className={p.startsWith('•') ? 'block pl-4 font-medium' : 'block'}
+                    />
                   ))}
                 </div>
 
@@ -201,9 +206,9 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
                   >
                     <div className="font-bold flex items-center space-x-1.5 mb-1">
                       <span>📌</span>
-                      <span>{callout.title}</span>
+                      <Editable path={`dossier.sec.${section.id}.callout.${idx}.title`} seed={callout.title} />
                     </div>
-                    <div>{callout.text}</div>
+                    <Editable as="div" multiline path={`dossier.sec.${section.id}.callout.${idx}.text`} seed={callout.text} />
                   </div>
                 ))}
 
@@ -215,7 +220,7 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
                         <tr>
                           {table.headers.map((h, hIdx) => (
                             <th key={hIdx} className="px-3.5 py-2.5 border-r border-stone-200 last:border-r-0">
-                              {h}
+                              <Editable path={`dossier.sec.${section.id}.tbl.${tIdx}.h.${hIdx}`} seed={h} />
                             </th>
                           ))}
                         </tr>
@@ -225,7 +230,7 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
                           <tr key={rIdx} className={rIdx % 2 === 0 ? 'bg-white' : 'bg-stone-50/70'}>
                             {row.map((cell, cIdx) => (
                               <td key={cIdx} className="px-3.5 py-2 border-r border-stone-200 last:border-r-0 leading-relaxed font-normal">
-                                {cell}
+                                <Editable multiline path={`dossier.sec.${section.id}.tbl.${tIdx}.r.${rIdx}.${cIdx}`} seed={cell} />
                               </td>
                             ))}
                           </tr>
