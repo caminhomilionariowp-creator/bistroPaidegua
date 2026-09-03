@@ -14,6 +14,7 @@ import {
   Palette
 } from 'lucide-react';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
+import { Editable, EditableList } from './Editable';
 
 interface PopViewerProps {
   selectedPopId?: string;
@@ -74,7 +75,7 @@ export const PopViewer: React.FC<PopViewerProps> = ({ selectedPopId, onOpenIllus
             </div>
             <div className="sm:col-span-6 p-3 flex flex-col justify-center items-center text-center border-y sm:border-y-0 sm:border-r sm:border-l border-stone-900 bg-stone-50">
               <span className="text-[10px] font-bold text-stone-500 uppercase">PROCEDIMENTO OPERACIONAL PADRÃO</span>
-              <h1 className="font-extrabold text-base text-stone-900">{currentPop.title}</h1>
+              <Editable as="h1" path={`pop.${currentPop.id}.title`} seed={currentPop.title} className="block font-extrabold text-base text-stone-900" />
             </div>
             <div className="sm:col-span-3 p-2 bg-stone-50 flex flex-col justify-center text-[11px] font-mono text-stone-700 space-y-0.5">
               <div><span className="font-bold">CÓDIGO:</span> {currentPop.code}</div>
@@ -107,9 +108,7 @@ export const PopViewer: React.FC<PopViewerProps> = ({ selectedPopId, onOpenIllus
             <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1 rounded mb-2">
               1. Objetivo do Procedimento
             </h3>
-            <p className="text-xs sm:text-sm text-stone-700 leading-relaxed pl-2">
-              {currentPop.objective}
-            </p>
+            <Editable as="p" multiline path={`pop.${currentPop.id}.objective`} seed={currentPop.objective} className="block text-xs sm:text-sm text-stone-700 leading-relaxed pl-2" />
           </div>
 
           <div>
@@ -117,12 +116,17 @@ export const PopViewer: React.FC<PopViewerProps> = ({ selectedPopId, onOpenIllus
               2. Materiais & Equipamentos Necessários
             </h3>
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-2 text-xs text-stone-700">
-              {currentPop.materialsNeeded.map((mat, idx) => (
-                <li key={idx} className="flex items-start space-x-2">
-                  <span className="text-blue-600 font-bold">▪</span>
-                  <span>{mat}</span>
-                </li>
-              ))}
+              <EditableList
+                path={`pop.${currentPop.id}.materials`}
+                seed={currentPop.materialsNeeded}
+                addLabel="Novo material…"
+                read={(mat, idx) => (
+                  <li key={idx} className="flex items-start space-x-2">
+                    <span className="text-blue-600 font-bold">▪</span>
+                    <span>{mat}</span>
+                  </li>
+                )}
+              />
             </ul>
           </div>
         </div>
@@ -151,9 +155,7 @@ export const PopViewer: React.FC<PopViewerProps> = ({ selectedPopId, onOpenIllus
                       <span className="w-6 h-6 rounded-full bg-stone-900 text-white font-mono font-bold flex items-center justify-center text-xs">
                         {step.order}
                       </span>
-                      <h4 className="font-extrabold text-stone-900 text-xs sm:text-sm">
-                        {step.title}
-                      </h4>
+                      <Editable as="h4" path={`pop.${currentPop.id}.step.${step.order}.title`} seed={step.title} className="font-extrabold text-stone-900 text-xs sm:text-sm" />
                     </div>
 
                     {step.requiredEvidence && (
@@ -163,14 +165,12 @@ export const PopViewer: React.FC<PopViewerProps> = ({ selectedPopId, onOpenIllus
                     )}
                   </div>
 
-                  <p className="text-xs sm:text-sm text-stone-700 leading-relaxed pl-8 mb-2">
-                    {step.description}
-                  </p>
+                  <Editable as="p" multiline path={`pop.${currentPop.id}.step.${step.order}.desc`} seed={step.description} className="block text-xs sm:text-sm text-stone-700 leading-relaxed pl-8 mb-2" />
 
                   {step.criticalControlPoint && (
                     <div className="ml-8 bg-white/80 p-2.5 rounded border border-stone-300 text-xs text-stone-900 font-medium flex items-start space-x-2">
                       <span className="text-amber-600 font-bold">⚠️ PONTO CRÍTICO:</span>
-                      <span className="leading-snug">{step.criticalControlPoint}</span>
+                      <Editable multiline path={`pop.${currentPop.id}.step.${step.order}.ccp`} seed={step.criticalControlPoint} className="leading-snug" />
                     </div>
                   )}
                 </div>
@@ -187,12 +187,17 @@ export const PopViewer: React.FC<PopViewerProps> = ({ selectedPopId, onOpenIllus
           </h3>
 
           <div className="bg-rose-50/60 border border-rose-300 rounded-lg p-4 space-y-2">
-            {currentPop.whatNotToDo.map((item, idx) => (
-              <div key={idx} className="flex items-start space-x-2 text-xs sm:text-sm text-rose-950 font-medium">
-                <span className="text-rose-600 font-bold">✕</span>
-                <span className="leading-snug">{item}</span>
-              </div>
-            ))}
+            <EditableList
+              path={`pop.${currentPop.id}.nunca`}
+              seed={currentPop.whatNotToDo}
+              addLabel="Nova proibição…"
+              read={(item, idx) => (
+                <div key={idx} className="flex items-start space-x-2 text-xs sm:text-sm text-rose-950 font-medium">
+                  <span className="text-rose-600 font-bold">✕</span>
+                  <span className="leading-snug">{item}</span>
+                </div>
+              )}
+            />
           </div>
         </div>
 
@@ -200,7 +205,7 @@ export const PopViewer: React.FC<PopViewerProps> = ({ selectedPopId, onOpenIllus
         <div className="space-y-6 page-break-inside-avoid">
           <div className="bg-stone-50 border border-stone-300 rounded-lg p-3.5 text-xs text-stone-700">
             <span className="font-bold text-stone-900 block mb-1">Reação à Não-Conformidade:</span>
-            <p className="leading-relaxed">{currentPop.nonComplianceReaction}</p>
+            <Editable as="p" multiline path={`pop.${currentPop.id}.reacao`} seed={currentPop.nonComplianceReaction} className="block leading-relaxed" />
           </div>
 
           <div className="grid grid-cols-2 gap-6 pt-4 border-t-2 border-stone-800 text-xs">

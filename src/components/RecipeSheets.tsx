@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { RECIPES_DATA } from '../data/recipesData';
 import { RecipeTechSheet } from '../types';
 import { PhotoUpload } from './PhotoUpload';
+import { Editable, EditableList } from './Editable';
 import { 
   ChefHat, 
   Clock, 
@@ -142,9 +143,7 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
                 </div>
                 <div className="sm:col-span-6 p-2 flex flex-col justify-center items-center text-center border-y sm:border-y-0 sm:border-r sm:border-l border-stone-900 bg-stone-50">
                   <span className="text-[10px] font-bold text-stone-500 uppercase">PADRÃO OFICIAL DE PRODUÇÃO & MONTAGEM</span>
-                  <h1 className="font-extrabold text-base sm:text-lg text-stone-900 leading-tight">
-                    {currentRecipe.dishName}
-                  </h1>
+                  <Editable as="h1" path={`recipe.${currentRecipe.id}.name`} seed={currentRecipe.dishName} className="block font-extrabold text-base sm:text-lg text-stone-900 leading-tight" />
                 </div>
                 <div className="sm:col-span-3 p-2 bg-stone-50 flex flex-col justify-center text-[11px] font-mono text-stone-800 space-y-0.5">
                   <div><span className="font-bold">CÓDIGO:</span> {currentRecipe.code}</div>
@@ -208,11 +207,15 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
                     <tbody className="divide-y divide-stone-200 bg-white">
                       {currentRecipe.ingredients.map((ing, idx) => (
                         <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-stone-50/50'}>
-                          <td className="px-3 py-1.5 font-medium text-stone-900">{ing.item}</td>
-                          <td className="px-3 py-1.5 font-bold font-mono text-right text-stone-800">
-                            {ing.grossQty} {ing.unit}
+                          <td className="px-3 py-1.5 font-medium text-stone-900">
+                            <Editable path={`recipe.${currentRecipe.id}.ing.${idx}.item`} seed={ing.item} />
                           </td>
-                          <td className="px-3 py-1.5 text-stone-600 text-[11px]">{ing.prePrepNotes || "-"}</td>
+                          <td className="px-3 py-1.5 font-bold font-mono text-right text-stone-800">
+                            <Editable path={`recipe.${currentRecipe.id}.ing.${idx}.qty`} seed={`${ing.grossQty} ${ing.unit}`} />
+                          </td>
+                          <td className="px-3 py-1.5 text-stone-600 text-[11px]">
+                            <Editable path={`recipe.${currentRecipe.id}.ing.${idx}.notes`} seed={ing.prePrepNotes || '-'} />
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -249,11 +252,14 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
               </h3>
 
               <div className="bg-stone-50 border border-stone-300 rounded-lg p-4 space-y-2 text-xs sm:text-sm text-stone-800">
-                {currentRecipe.stepByStep.map((step, idx) => (
-                  <p key={idx} className="leading-relaxed font-medium">
-                    {step}
-                  </p>
-                ))}
+                <EditableList
+                  path={`recipe.${currentRecipe.id}.steps`}
+                  seed={currentRecipe.stepByStep}
+                  addLabel="Novo passo…"
+                  read={(step, idx) => (
+                    <p key={idx} className="leading-relaxed font-medium">{step}</p>
+                  )}
+                />
               </div>
             </div>
 
@@ -265,9 +271,12 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
                   <span>Padrão de Empratamento & Apresentação</span>
                 </span>
                 <ul className="text-xs text-amber-900 space-y-1">
-                  {currentRecipe.platingStandard.map((pl, pIdx) => (
-                    <li key={pIdx}>• {pl}</li>
-                  ))}
+                  <EditableList
+                    path={`recipe.${currentRecipe.id}.plating`}
+                    seed={currentRecipe.platingStandard}
+                    addLabel="Novo padrão de montagem…"
+                    read={(pl, pIdx) => <li key={pIdx}>• {pl}</li>}
+                  />
                 </ul>
               </div>
 
@@ -277,9 +286,12 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
                   <span>Pontos Críticos de Segurança e Validade</span>
                 </span>
                 <div className="text-xs text-rose-900 space-y-1.5">
-                  {currentRecipe.criticalSafetyNotes.map((note, nIdx) => (
-                    <p key={nIdx} className="leading-snug">{note}</p>
-                  ))}
+                  <EditableList
+                    path={`recipe.${currentRecipe.id}.safety`}
+                    seed={currentRecipe.criticalSafetyNotes}
+                    addLabel="Novo ponto de segurança…"
+                    read={(note, nIdx) => <p key={nIdx} className="leading-snug">{note}</p>}
+                  />
                 </div>
               </div>
             </div>
