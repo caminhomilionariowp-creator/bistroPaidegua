@@ -24,6 +24,7 @@ interface LoginModalProps {
   currentEmployee: EmployeeAccount;
   onSelectEmployee: (employee: EmployeeAccount) => void;
   onOpenTeamManagement?: () => void;
+  onLogout?: () => void;
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({
@@ -32,7 +33,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   employees,
   currentEmployee,
   onSelectEmployee,
-  onOpenTeamManagement
+  onOpenTeamManagement,
+  onLogout
 }) => {
   const [selectedTarget, setSelectedTarget] = useState<EmployeeAccount | null>(null);
   const [pinInput, setPinInput] = useState<string>('');
@@ -306,16 +308,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   </button>
                 </div>
 
-                {/* Action Buttons: 1-Click Quick Login or Confirm */}
-                <div className="space-y-1.5 pt-2 border-t border-stone-200">
-                  <button
-                    type="button"
-                    onClick={() => handleDirectQuickLogin(selectedTarget)}
-                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2 rounded-xl shadow-xs transition-colors flex items-center justify-center space-x-1.5 cursor-pointer"
-                  >
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>Entrar Direto (1 Clique)</span>
-                  </button>
+                <div className="pt-2 border-t border-stone-200 text-center text-[11px] text-stone-500">
+                  Digite os 4 dígitos do PIN para confirmar.
                 </div>
 
               </div>
@@ -334,15 +328,25 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             </span>
           </div>
 
-          <button
-            onClick={() => {
-              onClose();
-              if (onOpenTeamManagement) onOpenTeamManagement();
-            }}
-            className="text-xs font-bold text-emerald-800 hover:text-emerald-950 underline shrink-0 cursor-pointer"
-          >
-            ⚙️ Gerenciar Equipe & PINs
-          </button>
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={() => {
+                onClose();
+                if (onOpenTeamManagement) onOpenTeamManagement();
+              }}
+              className="text-xs font-bold text-emerald-800 hover:text-emerald-950 underline cursor-pointer"
+            >
+              ⚙️ Equipe & PINs
+            </button>
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="text-xs font-bold text-rose-700 hover:text-rose-900 underline cursor-pointer"
+              >
+                Sair do sistema
+              </button>
+            )}
+          </div>
         </div>
 
       </div>

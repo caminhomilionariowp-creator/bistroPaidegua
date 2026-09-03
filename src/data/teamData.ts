@@ -141,6 +141,35 @@ export const DEFAULT_TEAM_MEMBERS: ResponsibleLeader[] = DEFAULT_EMPLOYEES
 const EMPLOYEES_STORAGE_KEY = 'bistro_pai_degua_employees_v2';
 const CURRENT_EMPLOYEE_KEY = 'bistro_pai_degua_current_emp_v2';
 const TEAM_STORAGE_KEY = 'bistro_pai_degua_team_v1';
+const SESSION_KEY = 'bistro_pai_degua_sessao_v1';
+
+/** Sessão: quem está logado neste aparelho. Null = mostrar a tela de login. */
+export const loadSession = (employees: EmployeeAccount[]): EmployeeAccount | null => {
+  try {
+    const id = localStorage.getItem(SESSION_KEY);
+    if (id) return employees.find((e) => e.id === id && e.active !== false) || null;
+  } catch (e) {
+    console.error('Falha ao ler sessão', e);
+  }
+  return null;
+};
+
+export const saveSession = (employeeId: string): void => {
+  try {
+    localStorage.setItem(SESSION_KEY, employeeId);
+    localStorage.setItem(CURRENT_EMPLOYEE_KEY, employeeId);
+  } catch (e) {
+    console.error('Falha ao salvar sessão', e);
+  }
+};
+
+export const clearSession = (): void => {
+  try {
+    localStorage.removeItem(SESSION_KEY);
+  } catch (e) {
+    console.error('Falha ao encerrar sessão', e);
+  }
+};
 
 export const loadEmployees = (): EmployeeAccount[] => {
   try {

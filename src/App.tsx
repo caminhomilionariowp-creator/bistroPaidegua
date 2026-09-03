@@ -17,7 +17,8 @@ import { AiAssistantModal } from './components/AiAssistantModal';
 import { TeamManagement } from './components/TeamManagement';
 import { SectorChecklist } from './components/SectorChecklist';
 import { LoginModal } from './components/LoginModal';
-import { loadTeamMembers, saveTeamMembers, loadEmployees, saveEmployees, loadCurrentEmployee, saveCurrentEmployeeId } from './data/teamData';
+import { LoginPage } from './components/LoginPage';
+import { loadTeamMembers, saveTeamMembers, loadEmployees, saveEmployees, loadSession, saveSession, clearSession } from './data/teamData';
 import { loadChecklistItems, saveChecklistItems } from './data/checklistsData';
 import { RECIPES_DATA } from './data/recipesData';
 import { getPhoto, setPhoto } from './lib/photoStore';
@@ -42,7 +43,7 @@ export default function App() {
   // Shared persistent state for Team Members, Employees & Checklists
   const [team, setTeam] = useState<ResponsibleLeader[]>(() => loadTeamMembers());
   const [employees, setEmployees] = useState<EmployeeAccount[]>(() => loadEmployees());
-  const [currentEmployee, setCurrentEmployee] = useState<EmployeeAccount>(() => loadCurrentEmployee(loadEmployees()));
+  const [session, setSession] = useState<EmployeeAccount | null>(() => loadSession(loadEmployees()));
   const [checklistItems, setChecklistItems] = useState<ChecklistItemData[]>(() => loadChecklistItems());
 
   useEffect(() => {
@@ -116,7 +117,24 @@ export default function App() {
     }
   };
 
-  const canEditSystem = !!(currentEmployee?.isManager || currentEmployee?.primarySector === 'gerencia');
+  const handleLogin = (emp: EmployeeAccount) => {
+    saveSession(emp.id);
+    setSession(emp);
+    setCurrentCategory(emp.primarySector === 'gerencia' || emp.isManager ? 'painel' : 'posto');
+  };
+  const handleLogout = () => {
+    clearSession();
+    setSession(null);
+    setIsLoginModalOpen(false);
+  };
+
+  // Portão de acesso: sem sessão, só a tela de login.
+  if (!session) {
+    return <LoginPage employees={employees} onLogin={handleLogin} />;
+  }
+  const currentEmployee: EmployeeAccount = session;
+
+  const canEditSystem = !!(currentEmployee.isManager || currentEmployee.primarySector === 'gerencia');
 
   return (
     <EditModeProvider canEdit={canEditSystem}>
@@ -338,9 +356,10 @@ export default function App() {
         employees={employees}
         currentEmployee={currentEmployee}
         onSelectEmployee={(emp) => {
-          setCurrentEmployee(emp);
-          saveCurrentEmployeeId(emp.id);
+          saveSession(emp.id);
+          setSession(emp);
         }}
+        onLogout={handleLogout}
         onOpenTeamManagement={() => {
           setIsLoginModalOpen(false);
           setCurrentCategory('team');

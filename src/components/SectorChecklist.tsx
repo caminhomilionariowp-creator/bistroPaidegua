@@ -78,6 +78,8 @@ export const SectorChecklist: React.FC<SectorChecklistProps> = ({
   currentEmployee,
   onOpenLoginModal
 }) => {
+  const isManager = !!(currentEmployee?.isManager || currentEmployee?.primarySector === 'gerencia');
+
   // Main view mode: 'sector_checklist' (standard sector items) vs 'role_tasks' (extracted role responsibilities)
   const [viewMode, setViewMode] = useState<'sector_checklist' | 'role_tasks'>('sector_checklist');
 
@@ -1074,7 +1076,8 @@ export const SectorChecklist: React.FC<SectorChecklistProps> = ({
 
           {/* Filter Tabs: Sector & Shift & Done/Pending */}
           <div className="bg-white rounded-xl border border-stone-200 p-4 shadow-sm space-y-3">
-            {/* Sector Buttons */}
+            {/* Sector Buttons — só o gestor/gerência vê e troca de setor */}
+            {isManager ? (
             <div className="flex items-center space-x-2 overflow-x-auto pb-1">
               <span className="text-xs font-bold text-stone-500 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
                 <Filter className="w-3.5 h-3.5" /> Setor:
@@ -1108,6 +1111,15 @@ export const SectorChecklist: React.FC<SectorChecklistProps> = ({
                 );
               })}
             </div>
+            ) : (
+              <div className="flex items-center gap-2 text-xs bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+                <Filter className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                <span className="font-bold text-emerald-900">
+                  Seu setor: {selectedSector.toUpperCase()}
+                </span>
+                <span className="text-emerald-700">— você vê só o checklist deste setor.</span>
+              </div>
+            )}
 
             {/* Shift Buttons & Status Filter Tabs */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-stone-100 text-xs">
