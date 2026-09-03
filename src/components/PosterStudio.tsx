@@ -39,6 +39,7 @@ import {
 } from 'lucide-react';
 import { CharacterAvatar, IllustratedStamp } from './Characters';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
+import { Editable } from './Editable';
 
 interface PosterStudioProps {
   selectedPosterId?: string;
@@ -157,13 +158,9 @@ export const PosterStudio: React.FC<PosterStudioProps> = ({
                 </span>
               </div>
 
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-black text-stone-900 tracking-tight leading-tight">
-                {poster.title}
-              </h1>
+              <Editable as="h1" multiline path={`poster.${poster.id}.title`} seed={poster.title} className="block text-lg sm:text-xl lg:text-2xl font-black text-stone-900 tracking-tight leading-tight" />
 
-              <p className="text-xs sm:text-sm font-semibold text-stone-600 leading-snug">
-                {poster.subtitle}
-              </p>
+              <Editable as="p" multiline path={`poster.${poster.id}.subtitle`} seed={poster.subtitle} className="block text-xs sm:text-sm font-semibold text-stone-600 leading-snug" />
             </div>
           </div>
 
@@ -242,7 +239,7 @@ export const PosterStudio: React.FC<PosterStudioProps> = ({
                       {poster.characterTitle}:
                     </span>
                     <p className="text-xs text-emerald-900 italic leading-tight">
-                      "{poster.characterQuote}"
+                      <Editable multiline path={`poster.${poster.id}.quote`} seed={poster.characterQuote} />
                     </p>
                   </div>
                 </div>
@@ -448,7 +445,7 @@ export const PosterStudio: React.FC<PosterStudioProps> = ({
                       {poster.characterTitle}:
                     </span>
                     <p className="text-xs text-rose-900 italic leading-tight">
-                      "{poster.characterQuote}"
+                      <Editable multiline path={`poster.${poster.id}.quote`} seed={poster.characterQuote} />
                     </p>
                   </div>
                 </div>
@@ -498,7 +495,7 @@ export const PosterStudio: React.FC<PosterStudioProps> = ({
                       {poster.characterTitle}:
                     </span>
                     <p className="text-xs text-blue-900 italic leading-tight">
-                      "{poster.characterQuote}"
+                      <Editable multiline path={`poster.${poster.id}.quote`} seed={poster.characterQuote} />
                     </p>
                   </div>
                 </div>
@@ -614,7 +611,7 @@ export const PosterStudio: React.FC<PosterStudioProps> = ({
                   REGRA INEGOCIÁVEL DO POSTO
                 </span>
                 <span className="text-xs font-bold text-emerald-100 leading-tight block">
-                  {poster.goldenRule}
+                  <Editable multiline path={`poster.${poster.id}.rule`} seed={poster.goldenRule} />
                 </span>
               </div>
             </div>

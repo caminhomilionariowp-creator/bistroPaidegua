@@ -15,6 +15,7 @@ import {
   Truck,
   ClipboardCheck,
   Check,
+  Trash2,
 } from 'lucide-react';
 import { StockItem, StockLevelKey, EmployeeAccount, DocumentCategory } from '../types';
 import {
@@ -29,6 +30,7 @@ import {
 } from '../data/stockData';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
 import { IllustratedStamp } from './Characters';
+import { useEditMode } from '../lib/editMode';
 
 interface StockControlProps {
   currentEmployee?: EmployeeAccount;
@@ -62,8 +64,27 @@ export const StockControl: React.FC<StockControlProps> = ({ currentEmployee, onN
     setTimeout(() => setToast(null), 3000);
   };
 
+  const { canEdit, editing } = useEditMode();
+  const editItems = canEdit && editing;
+
   const patch = (id: string, changes: Partial<StockItem>) =>
     persist(items.map((it) => (it.id === id ? { ...it, ...changes } : it)));
+
+  const removeItem = (id: string) => persist(items.filter((it) => it.id !== id));
+  const addItem = () => {
+    const it: StockItem = {
+      id: `st-${Date.now()}`,
+      name: 'Novo insumo',
+      category: STOCK_CATEGORIES[0],
+      unit: 'kg',
+      current: 0,
+      ideal: 10,
+      min: 4,
+      critical: 2,
+    };
+    persist([it, ...items]);
+    flash('Item adicionado — edite o nome e os níveis.');
+  };
 
   const adjust = (item: StockItem, delta: number) => {
     const current = Math.max(0, Math.round((item.current + delta) * 100) / 100);
@@ -371,6 +392,14 @@ export const StockControl: React.FC<StockControlProps> = ({ currentEmployee, onN
       </div>
 
       {/* ===== GRADE DE ITENS ===== */}
+      {editItems && !countMode && (
+        <button
+          onClick={addItem}
+          className="w-full border-2 border-dashed border-emerald-300 text-emerald-700 hover:bg-emerald-50 rounded-2xl py-3 text-sm font-bold flex items-center justify-center gap-1.5 cursor-pointer no-print"
+        >
+          <Plus className="w-4 h-4" /> Adicionar insumo ao estoque
+        </button>
+      )}
       {countMode ? (
         <div className="bg-white border border-stone-200 rounded-2xl shadow-paper overflow-hidden">
           <div className="bg-stone-900 text-white p-3 text-xs font-bold flex items-center gap-2">
@@ -410,14 +439,84 @@ export const StockControl: React.FC<StockControlProps> = ({ currentEmployee, onN
             return (
               <div key={it.id} className="bg-white border border-stone-200 rounded-2xl p-4 shadow-paper page-break-inside-avoid">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="font-black text-sm text-stone-900">{it.name}</p>
-                    <p className="text-[10px] text-stone-400">{it.category}</p>
+                  <div className="min-w-0 flex-1">
+                    {editItems ? (
+                      <input
+                        value={it.name}
+                        onChange={(e) => patch(it.id, { name: e.target.value })}
+                        className="w-full font-black text-sm text-stone-900 bg-emerald-50 border border-emerald-300 rounded px-1.5 py-0.5 focus:outline-hidden"
+                      />
+                    ) : (
+                      <p className="font-black text-sm text-stone-900">{it.name}</p>
+                    )}
+                    {editItems ? (
+                      <select
+                        value={it.category}
+                        onChange={(e) => patch(it.id, { category: e.target.value })}
+                        className="mt-1 text-[10px] text-stone-500 bg-white border border-stone-200 rounded px-1 py-0.5 focus:outline-hidden"
+                      >
+                        {STOCK_CATEGORIES.map((c) => (
+                          <option key={c}>{c}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p className="text-[10px] text-stone-400">{it.category}</p>
+                    )}
                   </div>
-                  <span className={`text-[10px] font-black px-2 py-0.5 rounded border shrink-0 ${meta.chipClass}`}>
-                    {meta.label}
-                  </span>
+                  {editItems ? (
+                    <button
+                      onClick={() => removeItem(it.id)}
+                      className="text-rose-400 hover:text-rose-600 shrink-0 cursor-pointer"
+                      title="Remover item"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded border shrink-0 ${meta.chipClass}`}>
+                      {meta.label}
+                    </span>
+                  )}
                 </div>
+
+                {editItems && (
+                  <div className="grid grid-cols-3 gap-1.5 mt-2 text-[10px]">
+                    {(['critical', 'min', 'ideal'] as const).map((k) => (
+                      <label key={k} className="flex flex-col text-stone-500">
+                        {k === 'critical' ? 'Crítico' : k === 'min' ? 'Mínimo' : 'Ideal'}
+                        <input
+                          type="number"
+                          value={it[k]}
+                          onChange={(e) => patch(it.id, { [k]: parseFloat(e.target.value) || 0 })}
+                          className="bg-white border border-stone-200 rounded px-1 py-0.5 font-mono focus:outline-hidden"
+                        />
+                      </label>
+                    ))}
+                    <label className="flex flex-col text-stone-500">
+                      Unidade
+                      <input
+                        value={it.unit}
+                        onChange={(e) => patch(it.id, { unit: e.target.value })}
+                        className="bg-white border border-stone-200 rounded px-1 py-0.5 focus:outline-hidden"
+                      />
+                    </label>
+                    <label className="flex flex-col text-stone-500 col-span-2">
+                      Fornecedor
+                      <input
+                        value={it.supplier || ''}
+                        onChange={(e) => patch(it.id, { supplier: e.target.value })}
+                        className="bg-white border border-stone-200 rounded px-1 py-0.5 focus:outline-hidden"
+                      />
+                    </label>
+                    <label className="flex flex-col text-stone-500 col-span-3">
+                      Endereço (PEPS)
+                      <input
+                        value={it.location || ''}
+                        onChange={(e) => patch(it.id, { location: e.target.value })}
+                        className="bg-white border border-stone-200 rounded px-1 py-0.5 focus:outline-hidden"
+                      />
+                    </label>
+                  </div>
+                )}
 
                 {/* termômetro horizontal */}
                 <div className="mt-3">
