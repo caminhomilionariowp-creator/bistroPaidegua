@@ -1,0 +1,36 @@
+name: Deploy para Netlify
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          # Chaves publicas do Supabase — ja vao no bundle do front, nao sao segredo.
+          VITE_SUPABASE_URL: https://yomipdpqjwdvohscuxfp.supabase.co
+          VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvbWlwZHBxandkdm9oc2N1eGZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0Nzc2NjYsImV4cCI6MjEwNDA1MzY2Nn0.YO_9dfrBpuZYT-8r1dnGoLA8rHKJEa-E7Y227laux9k
+
+      - name: Deploy (Netlify)
+        run: npx --yes netlify-cli deploy --prod --dir=dist --site="$NETLIFY_SITE_ID" --message "CI ${GITHUB_SHA::7}"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: 985a45e1-a968-432d-bee1-4c530ad75261
