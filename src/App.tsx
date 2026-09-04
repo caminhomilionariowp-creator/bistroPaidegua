@@ -24,6 +24,8 @@ import { RECIPES_DATA } from './data/recipesData';
 import { getPhoto, setPhoto } from './lib/photoStore';
 import { EditModeProvider } from './lib/editMode';
 import { EditModeBar } from './components/EditModeBar';
+import { initSync } from './lib/db';
+import { SyncBadge } from './components/SyncBadge';
 import { Printer, Sparkles, BookOpen, Layers, FileText, CheckCircle2, Tag, ChefHat, Palette, Users, CheckSquare } from 'lucide-react';
 
 export default function App() {
@@ -57,6 +59,22 @@ export default function App() {
   useEffect(() => {
     saveChecklistItems(checklistItems);
   }, [checklistItems]);
+
+  // Backend: sincroniza o estado entre aparelhos.
+  useEffect(() => {
+    initSync();
+    const onSync = (e: Event) => {
+      const key = (e as CustomEvent).detail?.key as string | undefined;
+      if (key === 'bistro_pai_degua_checklists_v2') setChecklistItems(loadChecklistItems());
+      else if (key === 'bistro_pai_degua_employees_v2') {
+        const emps = loadEmployees();
+        setEmployees(emps);
+        setSession((s) => (s ? emps.find((e2) => e2.id === s.id) || s : s));
+      } else if (key === 'bistro_pai_degua_team_v1') setTeam(loadTeamMembers());
+    };
+    window.addEventListener('bistro:sync', onSync);
+    return () => window.removeEventListener('bistro:sync', onSync);
+  }, []);
 
   const handlePrint = () => {
     window.print();
@@ -374,6 +392,7 @@ export default function App() {
 
       {/* Barra de edição do gestor */}
       <EditModeBar />
+      <SyncBadge />
 
     </div>
     </EditModeProvider>

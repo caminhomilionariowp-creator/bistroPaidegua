@@ -31,6 +31,14 @@ export const subscribeContent = (fn: () => void) => {
 };
 const emit = () => listeners.forEach((fn) => fn());
 
+// Atualização vinda de outro aparelho (sincronização).
+if (typeof window !== 'undefined') {
+  window.addEventListener('bistro:sync', (e) => {
+    const key = (e as CustomEvent).detail?.key as string | undefined;
+    if (key === KEY) emit();
+  });
+}
+
 export const hasOverride = (path: string): boolean => path in read();
 
 export const getOverride = <T,>(path: string): T | undefined => read()[path] as T | undefined;
