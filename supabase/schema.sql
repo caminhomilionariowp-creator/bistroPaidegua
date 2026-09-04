@@ -23,7 +23,11 @@ create policy "app le e grava"
   with check (true);
 
 -- Realtime: publica mudanças da tabela para o app sincronizar entre aparelhos.
-alter publication supabase_realtime add table public.estado_app;
+do $$
+begin
+  alter publication supabase_realtime add table public.estado_app;
+exception when duplicate_object then null;
+end $$;
 
 -- ------------------------------------------------------------
 --  Storage: fotos reais dos pratos / auditoria
