@@ -33,4 +33,4 @@ jobs:
         run: npx --yes netlify-cli deploy --prod --dir=dist --site="$NETLIFY_SITE_ID" --message "CI ${GITHUB_SHA::7}"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: 985a45e1-a968-432d-bee1-4c530ad75261
+          NETLIFY_SITE_ID: 09a2c3b8-23ed-4ca9-828a-330daf9762c3
