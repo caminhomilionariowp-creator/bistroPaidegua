@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useSyncExternalStore } from 'react';
 import { Plus, Trash2, ChevronUp, ChevronDown, RotateCcw } from 'lucide-react';
 import { useEditMode } from '../lib/editMode';
 import {
@@ -7,7 +7,12 @@ import {
   setOverride,
   clearOverride,
   hasOverride,
+  subscribeContent,
+  overrideCount,
 } from '../lib/contentStore';
+
+/** re-renderiza quando qualquer edição muda (inclui as que chegam de outro aparelho). */
+const useContentTick = () => useSyncExternalStore(subscribeContent, overrideCount, () => 0);
 
 /* ---------- Texto editável ---------- */
 
@@ -29,6 +34,7 @@ export const Editable: React.FC<EditableProps> = ({
 }) => {
   const { canEdit, editing } = useEditMode();
   const [, force] = useState(0);
+  useContentTick();
   const El = as as any;
   const value = resolveText(path, seed);
 
@@ -85,6 +91,7 @@ export const EditableList: React.FC<EditableListProps> = ({
   className = '',
 }) => {
   const { canEdit, editing } = useEditMode();
+  useContentTick();
   const items = resolveList(path, seed);
   const [draft, setDraft] = useState('');
 

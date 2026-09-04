@@ -13,6 +13,7 @@ import {
   Sliders
 } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
+import { Editable } from './Editable';
 
 export const LabelsStudio: React.FC = () => {
   const [labels, setLabels] = useState<UniversalLabelTemplate[]>(DEFAULT_LABELS_PRESETS);
@@ -79,10 +80,14 @@ export const LabelsStudio: React.FC = () => {
           <div>
             <h2 className="text-base font-extrabold text-stone-900 flex items-center space-x-2">
               <Tag className="w-5 h-5 text-emerald-600" />
-              <span>Gerador de Etiquetas Universais de Alimentos (Regra de Ouro)</span>
+              <Editable path="labels.header.title" seed="Gerador de Etiquetas Universais de Alimentos (Regra de Ouro)" />
             </h2>
             <p className="text-xs text-stone-500">
-              Crie, personalize e imprima folhas completas de etiquetas adesivas para porcionamento e fracionamento.
+              <Editable
+                path="labels.header.subtitle"
+                seed="Crie, personalize e imprima folhas completas de etiquetas adesivas para porcionamento e fracionamento."
+                multiline
+              />
             </p>
           </div>
 
@@ -304,7 +309,9 @@ export const LabelsStudio: React.FC = () => {
                 {/* Footer notes / rule */}
                 <div className="pt-1.5 border-t border-dashed border-stone-300 flex items-center justify-between text-[9px] text-stone-500">
                   <span>{currentItem.lotLocation || "Cozinha / Estoque"}</span>
-                  <span className="font-bold text-emerald-800">Sem etiqueta = Sem uso</span>
+                  <span className="font-bold text-emerald-800">
+                    <Editable path="labels.goldenRule" seed="Sem etiqueta = Sem uso" />
+                  </span>
                 </div>
               </div>
             );
@@ -313,7 +320,11 @@ export const LabelsStudio: React.FC = () => {
 
         {/* Footer Warning */}
         <div className="mt-8 pt-3 border-t border-stone-300 text-center text-[10px] text-stone-400 font-mono">
-          Padrão Obrigatório de Segurança Alimentar • Bistrô Pai d'Égua • Imprimir em papel adesivo A4
+          <Editable
+            path="labels.footerWarning"
+            seed="Padrão Obrigatório de Segurança Alimentar • Bistrô Pai d'Égua • Imprimir em papel adesivo A4"
+            multiline
+          />
         </div>
 
       </div>

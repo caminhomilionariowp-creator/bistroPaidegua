@@ -31,6 +31,7 @@ import {
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
 import { IllustratedStamp } from './Characters';
 import { useEditMode } from '../lib/editMode';
+import { useSyncRefresh } from '../lib/useSync';
 
 interface StockControlProps {
   currentEmployee?: EmployeeAccount;
@@ -54,6 +55,8 @@ export const StockControl: React.FC<StockControlProps> = ({ currentEmployee, onN
   const [query, setQuery] = useState('');
   const [countMode, setCountMode] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+
+  useSyncRefresh(['bistro_pai_degua_estoque_v1'], () => setItems(loadStock()));
 
   const persist = (next: StockItem[]) => {
     setItems(next);

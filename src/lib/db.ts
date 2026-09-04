@@ -29,6 +29,7 @@ export const SYNCED_KEYS: string[] = [
   'bistro_pai_degua_rastreabilidade_v1', // lotes / validade
   'bistro_pai_degua_ocorrencias_v1', // ocorrências do Painel
   'bistro_pai_degua_implantacao_inicio_v1',
+  'bistro_pai_degua_fotos_v2', // índice de fotos (URL pública do Storage)
 ];
 
 const isSynced = (k: string) =>
@@ -53,9 +54,24 @@ const setStatus = (s: SyncStatus) => {
 
 /* ---------- gravação sem eco (bypass do monkeypatch) ---------- */
 const rawSetItem = Storage.prototype.setItem;
+
+/** Como o valor do servidor deve ficar no localStorage.
+ *  Algumas chaves guardam string crua (ex.: data ISO), não JSON. */
+const asLocalString = (value: unknown): string =>
+  typeof value === 'string' ? value : JSON.stringify(value);
+
+/** Tenta desserializar JSON; se não for JSON, devolve a string crua. */
+const parseMaybe = (raw: string): unknown => {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw;
+  }
+};
+
 const writeLocalRaw = (key: string, value: unknown) => {
   try {
-    rawSetItem.call(localStorage, key, JSON.stringify(value));
+    rawSetItem.call(localStorage, key, asLocalString(value));
   } catch {
     /* cota cheia */
   }
@@ -105,11 +121,7 @@ const patchLocalStorage = () => {
   Storage.prototype.setItem = function (key: string, value: string) {
     original.call(this, key, value);
     if (this === window.localStorage && isSynced(key)) {
-      try {
-        pushKey(key, JSON.parse(value));
-      } catch {
-        pushKey(key, value);
-      }
+      pushKey(key, parseMaybe(value));
     }
   };
 };
@@ -123,8 +135,8 @@ const startRealtime = () => {
       const row = (payload.new ?? payload.old) as { chave?: string; valor?: unknown } | undefined;
       const key = row?.chave;
       if (!key || !isSynced(key)) return;
-      const incoming = JSON.stringify(row?.valor ?? null);
-      if (lastPushed.get(key) === incoming) return; // eco do nosso próprio push
+      if (lastPushed.get(key) === JSON.stringify(row?.valor ?? null)) return; // eco do nosso push
+      const incoming = asLocalString(row?.valor ?? null);
       let localNow: string | null = null;
       try {
         localNow = localStorage.getItem(key);
@@ -155,8 +167,7 @@ export const initSync = async () => {
       } catch {
         /* ignore */
       }
-      const incoming = JSON.stringify(valor);
-      if (localNow !== incoming) writeLocalRaw(chave, valor);
+      if (localNow !== asLocalString(valor)) writeLocalRaw(chave, valor);
     });
     setStatus('ok');
   } catch {
@@ -169,7 +180,7 @@ export const initSync = async () => {
       const v = localStorage.getItem(k);
       if (v) {
         const has = await pullKey(k);
-        if (has === undefined) pushKey(k, JSON.parse(v));
+        if (has === undefined) pushKey(k, parseMaybe(v));
       }
     } catch {
       /* ignore */
@@ -182,6 +193,22 @@ const pullAll = async (): Promise<{ chave: string; valor: unknown }[]> => {
   const { data, error } = await supabase.from(TABLE).select('chave, valor');
   if (error) throw error;
   return (data as { chave: string; valor: unknown }[]) || [];
+};
+
+/* ---------- avisos de sincronização pra componentes ---------- */
+/**
+ * Chama `cb` quando uma das chaves chegar do servidor (realtime/pull).
+ * Aceita chave exata ou prefixo terminando em "*".
+ */
+export const onSyncKey = (keys: string[], cb: (key: string) => void) => {
+  const hit = (k: string) =>
+    keys.some((m) => (m.endsWith('*') ? k.startsWith(m.slice(0, -1)) : k === m));
+  const handler = (e: Event) => {
+    const k = (e as CustomEvent).detail?.key as string | undefined;
+    if (k && hit(k)) cb(k);
+  };
+  window.addEventListener('bistro:sync', handler);
+  return () => window.removeEventListener('bistro:sync', handler);
 };
 
 /* ---------- fotos: Supabase Storage ---------- */

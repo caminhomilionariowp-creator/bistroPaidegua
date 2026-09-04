@@ -1,53 +1,111 @@
 /* ================================================================== */
-/*  Fotos reais do Bistrô — guardadas no navegador (localStorage).      */
-/*  Redimensiona no upload pra caber. Chave por prato/foto.             */
+/*  Fotos reais do Bistrô.                                             */
+/*  - Com backend: a imagem vai pro Supabase Storage (bucket "fotos")  */
+/*    e o índice guarda a URL pública (sincroniza entre aparelhos).    */
+/*  - Sem backend: o índice guarda o próprio data URI (só no aparelho).*/
+/*  Um cache local guarda o data URI pra abrir na hora / offline.      */
 /* ================================================================== */
+import { backendEnabled, uploadPhoto, deletePhotoRemote } from './db';
 
-const KEY = 'bistro_pai_degua_fotos_v1';
+const INDEX_KEY = 'bistro_pai_degua_fotos_v2'; // sincronizado (ver SYNCED_KEYS)
+const CACHE_KEY = 'bistro_pai_degua_fotos_cache_v1'; // só local
+const LEGACY_KEY = 'bistro_pai_degua_fotos_v1'; // versão antiga (base64 local)
 
-type PhotoStore = Record<string, string>; // chave -> data URI (jpeg)
+type Store = Record<string, string>;
 
-const read = (): PhotoStore => {
+const read = (key: string): Store => {
   try {
-    return JSON.parse(localStorage.getItem(KEY) || '{}');
+    return JSON.parse(localStorage.getItem(key) || '{}');
   } catch {
     return {};
   }
 };
-
-export const getPhoto = (key: string): string | undefined => read()[key];
-
-export const setPhoto = (key: string, dataUri: string): void => {
-  const store = read();
-  store[key] = dataUri;
+const write = (key: string, store: Store) => {
   try {
-    localStorage.setItem(KEY, JSON.stringify(store));
+    localStorage.setItem(key, JSON.stringify(store));
   } catch {
-    throw new Error(
-      'Armazenamento de fotos cheio. Remova fotos antigas antes de adicionar novas.',
-    );
+    throw new Error('Armazenamento cheio. Remova fotos antigas antes de adicionar novas.');
   }
+};
+
+/* ---------- observers ---------- */
+const listeners = new Set<() => void>();
+export const subscribePhotos = (fn: () => void) => {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+};
+const emit = () => listeners.forEach((fn) => fn());
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('bistro:sync', (e) => {
+    if ((e as CustomEvent).detail?.key === INDEX_KEY) emit();
+  });
+}
+
+/* ---------- leitura ---------- */
+export const getPhoto = (key: string): string | undefined => {
+  const idx = read(INDEX_KEY)[key];
+  if (idx) return idx;
+  const cached = read(CACHE_KEY)[key];
+  if (cached) return cached;
+  return read(LEGACY_KEY)[key];
+};
+
+/** Caminho do arquivo no bucket a partir da chave da foto. */
+const storagePath = (key: string) => `${key.replace(/[^a-zA-Z0-9._-]/g, '_')}.jpg`;
+
+/* ---------- escrita ---------- */
+/** Grava a foto (data URI). Local na hora; sobe pro Storage em segundo plano. */
+export const setPhoto = (key: string, dataUri: string): void => {
+  const cache = read(CACHE_KEY);
+  cache[key] = dataUri;
+  write(CACHE_KEY, cache);
+
+  const setIndex = (value: string) => {
+    const now = read(INDEX_KEY);
+    now[key] = value;
+    write(INDEX_KEY, now);
+    emit();
+  };
+
+  if (!backendEnabled) {
+    setIndex(dataUri); // sem nuvem: a referência é o próprio data URI (só neste aparelho)
+    return;
+  }
+
+  // Com nuvem: NÃO joga base64 no índice sincronizado — só a URL depois do upload.
+  emit(); // já mostra do cache local
+  uploadPhoto(storagePath(key), dataUri)
+    .then((url) => setIndex(url || dataUri))
+    .catch(() => setIndex(dataUri));
 };
 
 export const removePhoto = (key: string): void => {
-  const store = read();
-  delete store[key];
-  try {
-    localStorage.setItem(KEY, JSON.stringify(store));
-  } catch {
-    /* ignore */
+  for (const k of [INDEX_KEY, CACHE_KEY, LEGACY_KEY]) {
+    const s = read(k);
+    if (k in s || key in s) {
+      delete s[key];
+      try {
+        write(k, s);
+      } catch {
+        /* ignore */
+      }
+    }
   }
+  emit();
+  if (backendEnabled) deletePhotoRemote(storagePath(key));
 };
 
 export const photoStorageInfo = (): { count: number; kb: number } => {
-  const raw = localStorage.getItem(KEY) || '{}';
+  const raw =
+    (localStorage.getItem(INDEX_KEY) || '{}').length + (localStorage.getItem(CACHE_KEY) || '{}').length;
   let count = 0;
   try {
-    count = Object.keys(JSON.parse(raw)).length;
+    count = Object.keys(read(INDEX_KEY)).length;
   } catch {
     /* ignore */
   }
-  return { count, kb: Math.round((raw.length * 2) / 1024) };
+  return { count, kb: Math.round((raw * 2) / 1024) };
 };
 
 /** Lê um arquivo de imagem e devolve um data URI JPEG redimensionado. */

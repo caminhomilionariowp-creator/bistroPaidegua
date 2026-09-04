@@ -38,6 +38,7 @@ import {
 import { loadOccurrences, saveOccurrences } from '../data/cockpitData';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
 import { IllustratedStamp } from './Characters';
+import { useSyncRefresh } from '../lib/useSync';
 
 interface Props {
   currentEmployee?: EmployeeAccount;
@@ -93,6 +94,8 @@ export const TraceabilityRegistry: React.FC<Props> = ({ currentEmployee, onNavig
     const i = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(i);
   }, []);
+
+  useSyncRefresh(['bistro_pai_degua_rastreabilidade_v1'], () => setLots(loadLots()));
 
   const persist = (next: TraceLot[]) => {
     setLots(next);

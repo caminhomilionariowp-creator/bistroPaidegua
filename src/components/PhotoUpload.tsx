@@ -1,6 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useSyncExternalStore } from 'react';
 import { Camera, Upload, Trash2, Edit3, RefreshCw } from 'lucide-react';
-import { getPhoto, setPhoto, removePhoto, fileToResizedDataUri } from '../lib/photoStore';
+import {
+  getPhoto,
+  setPhoto,
+  removePhoto,
+  fileToResizedDataUri,
+  subscribePhotos,
+} from '../lib/photoStore';
 
 interface PhotoUploadProps {
   /** chave única da foto, ex.: "recipe:rec-tacaca" */
@@ -29,7 +35,11 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
   onAnnotate,
   className = '',
 }) => {
-  const [photo, setPhotoState] = useState<string | undefined>(() => getPhoto(photoKey));
+  const photo = useSyncExternalStore(
+    subscribePhotos,
+    () => getPhoto(photoKey),
+    () => undefined,
+  );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -42,7 +52,6 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
     try {
       const dataUri = await fileToResizedDataUri(file);
       setPhoto(photoKey, dataUri);
-      setPhotoState(dataUri);
     } catch (e: any) {
       setError(e?.message || 'Falha ao salvar a foto.');
     } finally {
@@ -52,7 +61,6 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
 
   const clear = () => {
     removePhoto(photoKey);
-    setPhotoState(undefined);
     setError(null);
   };
 

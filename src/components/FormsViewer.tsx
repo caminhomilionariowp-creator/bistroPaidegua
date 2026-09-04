@@ -12,6 +12,7 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
+import { Editable } from './Editable';
 
 interface FormsViewerProps {
   selectedFormId?: string;
@@ -73,13 +74,13 @@ export const FormsViewer: React.FC<FormsViewerProps> = ({ selectedFormId }) => {
             <div className="sm:col-span-6 p-2 flex flex-col justify-center items-center text-center border-y sm:border-y-0 sm:border-r sm:border-l border-stone-900 bg-stone-50">
               <span className="text-[10px] font-bold text-stone-500 uppercase">FORMULÁRIO OPERACIONAL DE CAMPO</span>
               <h1 className="font-extrabold text-sm sm:text-base text-stone-900 leading-tight">
-                {currentForm.title}
+                <Editable path={`form.${currentForm.id}.title`} seed={currentForm.title} />
               </h1>
             </div>
             <div className="sm:col-span-3 p-2 bg-stone-50 flex flex-col justify-center text-[11px] font-mono text-stone-800 space-y-0.5">
               <div><span className="font-bold">CÓDIGO:</span> {currentForm.code}</div>
-              <div><span className="font-bold">SETOR:</span> {currentForm.sector}</div>
-              <div><span className="font-bold">FREQ:</span> {currentForm.frequency}</div>
+              <div><span className="font-bold">SETOR:</span> <Editable path={`form.${currentForm.id}.sector`} seed={currentForm.sector} /></div>
+              <div><span className="font-bold">FREQ:</span> <Editable path={`form.${currentForm.id}.frequency`} seed={currentForm.frequency} /></div>
             </div>
           </div>
 
@@ -87,7 +88,9 @@ export const FormsViewer: React.FC<FormsViewerProps> = ({ selectedFormId }) => {
           <div className="p-3 bg-stone-50/70 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             {currentForm.fields.map((field) => (
               <div key={field.id} className="border-b border-stone-400 pb-1 flex items-baseline justify-between">
-                <span className="font-bold text-stone-700 text-[11px]">{field.label}:</span>
+                <span className="font-bold text-stone-700 text-[11px]">
+                  <Editable path={`form.${currentForm.id}.field.${field.id}`} seed={field.label} />:
+                </span>
                 <span className="text-stone-400 font-mono text-[11px] italic">
                   {field.placeholder || "__________________"}
                 </span>
@@ -99,7 +102,8 @@ export const FormsViewer: React.FC<FormsViewerProps> = ({ selectedFormId }) => {
         {/* Purpose Callout */}
         <div className="mb-4 text-[11px] text-stone-600 italic bg-stone-50 p-2 rounded border border-stone-200">
           <span className="font-bold text-stone-800 not-italic">Finalidade Oficial: </span>
-          {currentForm.purpose}
+          <Editable path={`form.${currentForm.id}.purpose`} seed={currentForm.purpose} multiline />
+
         </div>
 
         {/* Structured Printable Data Table */}
@@ -111,7 +115,7 @@ export const FormsViewer: React.FC<FormsViewerProps> = ({ selectedFormId }) => {
                   <th className="px-2.5 py-2 border-r border-stone-800 w-8 text-center">#</th>
                   {currentForm.tableTemplate.columns.map((col, idx) => (
                     <th key={idx} className="px-3 py-2 border-r border-stone-800 last:border-r-0">
-                      {col}
+                      <Editable path={`form.${currentForm.id}.col.${idx}`} seed={col} />
                     </th>
                   ))}
                 </tr>
@@ -149,7 +153,9 @@ export const FormsViewer: React.FC<FormsViewerProps> = ({ selectedFormId }) => {
         {/* Bottom Signature & Verification Area */}
         <div className="grid grid-cols-2 gap-8 pt-4 border-t-2 border-stone-800 text-xs page-break-inside-avoid">
           <div className="border border-stone-300 p-3 rounded bg-stone-50/50">
-            <div className="font-bold text-stone-900 mb-1">{currentForm.signatureBlock.executorTitle}</div>
+            <div className="font-bold text-stone-900 mb-1">
+              <Editable path={`form.${currentForm.id}.sig.executor`} seed={currentForm.signatureBlock.executorTitle} />
+            </div>
             <div className="h-10 border-b border-dashed border-stone-400 mb-2"></div>
             <div className="flex justify-between text-[10px] text-stone-500 font-mono">
               <span>Assinatura: ________________</span>
@@ -158,7 +164,9 @@ export const FormsViewer: React.FC<FormsViewerProps> = ({ selectedFormId }) => {
           </div>
 
           <div className="border border-stone-300 p-3 rounded bg-stone-50/50">
-            <div className="font-bold text-stone-900 mb-1">{currentForm.signatureBlock.checkerTitle}</div>
+            <div className="font-bold text-stone-900 mb-1">
+              <Editable path={`form.${currentForm.id}.sig.checker`} seed={currentForm.signatureBlock.checkerTitle} />
+            </div>
             <div className="h-10 border-b border-dashed border-stone-400 mb-2"></div>
             <div className="flex justify-between text-[10px] text-stone-500 font-mono">
               <span>Visto de Auditoria: ________</span>

@@ -47,6 +47,8 @@ import { scheduleFor, todayScheduleLabel, OPEN_DAYS_LABEL, currentTurnPhase } fr
 import { Gauge, MiniBar } from './Gauge';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
 import { CharacterAvatar } from './Characters';
+import { useSyncRefresh } from '../lib/useSync';
+import { Editable } from './Editable';
 
 interface CockpitPanelProps {
   checklistItems: ChecklistItemData[];
@@ -97,6 +99,19 @@ export const CockpitPanel: React.FC<CockpitPanelProps> = ({
   );
   const [showForm, setShowForm] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+
+  useSyncRefresh(
+    [
+      'bistro_pai_degua_ocorrencias_v1',
+      'bistro_pai_degua_implantacao_inicio_v1',
+      'bistro_pai_degua_principios_*',
+    ],
+    () => {
+      setOccurrences(loadOccurrences());
+      setStartISO(loadImplantationStart());
+      setPrincipleState(loadPrincipleStatus(today));
+    },
+  );
 
   useEffect(() => saveOccurrences(occurrences), [occurrences]);
   useEffect(() => savePrincipleStatus(today, principleState), [principleState, today]);
@@ -491,16 +506,20 @@ export const CockpitPanel: React.FC<CockpitPanelProps> = ({
               <div>
                 <div className="flex items-center gap-2 text-stone-500">
                   <Lock className="w-4 h-4" />
-                  <span className="font-bold text-sm text-stone-700">{ind.label}</span>
+                  <span className="font-bold text-sm text-stone-700">
+                    <Editable path={`cockpit.indicator.${ind.key}.label`} seed={ind.label} />
+                  </span>
                 </div>
-                <p className="text-xs text-stone-500 mt-1 max-w-sm">{ind.measures}</p>
+                <p className="text-xs text-stone-500 mt-1 max-w-sm">
+                  <Editable path={`cockpit.indicator.${ind.key}.measures`} seed={ind.measures} multiline />
+                </p>
               </div>
               <span className="text-[10px] font-mono font-bold bg-stone-800 text-amber-300 px-2 py-1 rounded">
                 {impl.financialsUnlocked ? 'PRONTO P/ CALIBRAR' : `${impl.daysToUnlockFinancials}d`}
               </span>
             </div>
             <p className="text-[11px] text-stone-500 mt-3 bg-white/70 border border-stone-200 rounded-lg p-2 leading-relaxed">
-              {ind.unlockNote}
+              <Editable path={`cockpit.indicator.${ind.key}.unlockNote`} seed={ind.unlockNote || ''} multiline />
             </p>
           </div>
         ))}
@@ -741,8 +760,12 @@ export const CockpitPanel: React.FC<CockpitPanelProps> = ({
                       {p.number}
                     </span>
                     <div className="min-w-0">
-                      <p className="font-bold text-xs text-stone-900">{p.title}</p>
-                      <p className="text-[10px] text-stone-500 leading-snug mt-0.5">{p.application}</p>
+                      <p className="font-bold text-xs text-stone-900">
+                        <Editable path={`cockpit.principle.${p.key}.title`} seed={p.title} />
+                      </p>
+                      <p className="text-[10px] text-stone-500 leading-snug mt-0.5">
+                        <Editable path={`cockpit.principle.${p.key}.application`} seed={p.application} multiline />
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
@@ -753,7 +776,7 @@ export const CockpitPanel: React.FC<CockpitPanelProps> = ({
 
                 {p.evaluation === 'auto' ? (
                   <p className="text-[10px] text-stone-500 mt-2 font-mono bg-white/60 rounded px-2 py-1 border border-stone-200">
-                    auto • {p.autoMetricLabel}
+                    auto • <Editable path={`cockpit.principle.${p.key}.metric`} seed={p.autoMetricLabel || ''} />
                   </p>
                 ) : (
                   <div className="flex items-center gap-1.5 mt-2 no-print">
@@ -802,10 +825,16 @@ export const CockpitPanel: React.FC<CockpitPanelProps> = ({
                 <span className={`w-6 h-6 rounded-lg ${c.badgeClass} text-white text-xs font-black flex items-center justify-center`}>
                   {c.step}
                 </span>
-                <span className="font-black text-sm text-stone-900">{c.title}</span>
+                <span className="font-black text-sm text-stone-900">
+                  <Editable path={`cockpit.ladder.${c.step}.title`} seed={c.title} />
+                </span>
               </div>
-              <p className="text-[11px] text-stone-500 font-semibold">{c.trigger}</p>
-              <p className="text-[11px] text-stone-700 mt-1 leading-relaxed">{c.action}</p>
+              <p className="text-[11px] text-stone-500 font-semibold">
+                <Editable path={`cockpit.ladder.${c.step}.trigger`} seed={c.trigger} multiline />
+              </p>
+              <p className="text-[11px] text-stone-700 mt-1 leading-relaxed">
+                <Editable path={`cockpit.ladder.${c.step}.action`} seed={c.action} multiline />
+              </p>
             </div>
           ))}
         </div>

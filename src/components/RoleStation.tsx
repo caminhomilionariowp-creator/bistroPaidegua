@@ -34,6 +34,8 @@ import {
 import { Gauge } from './Gauge';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
 import { CharacterAvatar, IllustratedStamp } from './Characters';
+import { Editable, EditableList } from './Editable';
+import { useSyncRefresh } from '../lib/useSync';
 
 interface RoleStationProps {
   team: ResponsibleLeader[];
@@ -108,6 +110,16 @@ export const RoleStation: React.FC<RoleStationProps> = ({
       /* ignore */
     }
   };
+
+  useSyncRefresh(['bistro_role_tasks_tracker_*', 'bistro_posto_epi_*'], () => {
+    setTaskState(loadRoleTasksState(date));
+    try {
+      const s = localStorage.getItem(EPI_KEY(role.id, date));
+      setEpiState(s ? JSON.parse(s) : role.requiredEpi.map(() => false));
+    } catch {
+      /* ignore */
+    }
+  });
 
   const [toast, setToast] = useState<string | null>(null);
   const flash = (m: string) => {
@@ -258,7 +270,7 @@ export const RoleStation: React.FC<RoleStationProps> = ({
                     {role.cboCode}
                   </span>
                   <span className="bg-white/10 text-stone-200 text-[10px] px-2 py-0.5 rounded font-medium">
-                    {meta.focusArea}
+                    <Editable path={`role.${role.id}.focusArea`} seed={meta.focusArea} />
                   </span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-2">
@@ -292,7 +304,9 @@ export const RoleStation: React.FC<RoleStationProps> = ({
           <div className="relative z-10 mt-4 bg-black/25 rounded-xl p-3.5 text-xs leading-relaxed text-stone-100 flex items-start gap-2">
             <Target className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
             <div>
-              <span className="font-bold text-white">Missão central do posto:</span> {role.summary}
+              <span className="font-bold text-white">Missão central do posto:</span>{' '}
+              <Editable path={`role.${role.id}.summary`} seed={role.summary} multiline />
+
             </div>
           </div>
         </div>
@@ -554,12 +568,17 @@ export const RoleStation: React.FC<RoleStationProps> = ({
             <ShieldCheck className="w-4 h-4 text-emerald-600" /> Regras de Ouro
           </h3>
           <ul className="space-y-2">
-            {role.rulesOfGold.map((r, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-emerald-900 leading-relaxed">
-                <span className="text-emerald-600 font-black shrink-0">✓</span>
-                {r}
-              </li>
-            ))}
+            <EditableList
+              path={`role.${role.id}.rulesOfGold`}
+              seed={role.rulesOfGold}
+              addLabel="Nova regra de ouro…"
+              read={(r, i) => (
+                <li key={i} className="flex items-start gap-2 text-xs text-emerald-900 leading-relaxed">
+                  <span className="text-emerald-600 font-black shrink-0">✓</span>
+                  {r}
+                </li>
+              )}
+            />
           </ul>
         </div>
         <div className="bg-rose-50 border-2 border-rose-300 rounded-2xl p-5">
@@ -567,12 +586,17 @@ export const RoleStation: React.FC<RoleStationProps> = ({
             <AlertTriangle className="w-4 h-4 text-rose-600" /> O que NUNCA fazer
           </h3>
           <ul className="space-y-2">
-            {role.prohibitions.map((p, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-rose-900 leading-relaxed">
-                <span className="text-rose-600 font-black shrink-0">🚫</span>
-                {p}
-              </li>
-            ))}
+            <EditableList
+              path={`role.${role.id}.prohibitions`}
+              seed={role.prohibitions}
+              addLabel="Nova proibição…"
+              read={(p, i) => (
+                <li key={i} className="flex items-start gap-2 text-xs text-rose-900 leading-relaxed">
+                  <span className="text-rose-600 font-black shrink-0">🚫</span>
+                  {p}
+                </li>
+              )}
+            />
           </ul>
         </div>
       </div>
@@ -584,12 +608,17 @@ export const RoleStation: React.FC<RoleStationProps> = ({
             <Award className="w-4 h-4 text-emerald-600" /> Como o posto é avaliado
           </h3>
           <ul className="space-y-2">
-            {role.performanceMetrics.map((m, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-stone-700">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                {m}
-              </li>
-            ))}
+            <EditableList
+              path={`role.${role.id}.performanceMetrics`}
+              seed={role.performanceMetrics}
+              addLabel="Novo critério de avaliação…"
+              read={(m, i) => (
+                <li key={i} className="flex items-start gap-2 text-xs text-stone-700">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
+                  {m}
+                </li>
+              )}
+            />
           </ul>
         </div>
         <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-paper">
