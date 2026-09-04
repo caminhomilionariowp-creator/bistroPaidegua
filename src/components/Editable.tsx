@@ -53,6 +53,11 @@ export const Editable: React.FC<EditableProps> = ({
       suppressContentEditableWarning
       spellCheck={false}
       style={multiline ? { whiteSpace: 'pre-wrap' } : undefined}
+      onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
+      onClick={(e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+      }}
       onBlur={(e: React.FocusEvent<HTMLElement>) => {
         const t = (e.currentTarget.textContent ?? '').replace(/ /g, ' ');
         if (t === seed) clearOverride(path);
