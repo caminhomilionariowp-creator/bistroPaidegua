@@ -209,3 +209,10 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* Widget "Powered by Netlify" injetado pela plataforma — some no nosso site. */
+#nl-badge-frame,
+iframe[id*="netlify-badge" i],
+iframe[title*="netlify" i] {
+  display: none !important;
+}
