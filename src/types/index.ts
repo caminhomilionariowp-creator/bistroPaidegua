@@ -13,6 +13,15 @@ export type DocumentCategory =
   | 'recipes'
   | 'illustrator';
 
+/** Não-gestores só navegam para o próprio posto, o checklist do setor e as
+ *  ferramentas de operação do dia a dia do setor — o resto (dossiê, cartazes,
+ *  POPs, formulários, etiquetas, fichas, ilustrador) é acervo de gestão. */
+export const staffVisibleCategories = (sector?: string): DocumentCategory[] => {
+  const base: DocumentCategory[] = ['posto', 'checklists'];
+  if (sector === 'cozinha' || sector === 'estoque') base.push('estoque', 'rastreabilidade');
+  return base;
+};
+
 /* ===== Painel do "Dia 1" — Indicadores operacionais (Dossiê §13) ===== */
 
 export type OccurrenceType = 'ruptura' | 'perda' | 'nao_conformidade' | 'elogio';

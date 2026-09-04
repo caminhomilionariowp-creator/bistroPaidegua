@@ -329,15 +329,17 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <button
-              onClick={() => {
-                onClose();
-                if (onOpenTeamManagement) onOpenTeamManagement();
-              }}
-              className="text-xs font-bold text-emerald-800 hover:text-emerald-950 underline cursor-pointer"
-            >
-              ⚙️ Equipe & PINs
-            </button>
+            {(currentEmployee.isManager || currentEmployee.primarySector === 'gerencia') && (
+              <button
+                onClick={() => {
+                  onClose();
+                  if (onOpenTeamManagement) onOpenTeamManagement();
+                }}
+                className="text-xs font-bold text-emerald-800 hover:text-emerald-950 underline cursor-pointer"
+              >
+                ⚙️ Equipe & PINs
+              </button>
+            )}
             {onLogout && (
               <button
                 onClick={onLogout}

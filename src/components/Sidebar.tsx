@@ -23,7 +23,7 @@ import {
   Tags,
   X
 } from 'lucide-react';
-import { DocumentCategory, EmployeeAccount } from '../types';
+import { DocumentCategory, EmployeeAccount, staffVisibleCategories } from '../types';
 import { POSTERS_DATA } from '../data/postersData';
 import { POPS_DATA } from '../data/popsData';
 import { FORMS_DATA } from '../data/formsData';
@@ -179,6 +179,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           Conjunto de Documentos Oficiais
         </h3>
         
+        {!isManager && (
+          <p className="text-[10px] text-stone-400 mb-2 leading-snug">
+            Seu acesso mostra só o seu posto, o checklist do setor e as ferramentas do dia a dia da sua função.
+          </p>
+        )}
         <div className="space-y-1">
           {[
             { id: 'painel', label: '★ Painel do Dia 1', desc: 'Cockpit: aderência, ruptura, perdas', icon: Gauge, count: 'Vivo' },
@@ -194,7 +199,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             { id: 'labels', label: '7. Etiquetas Universais', desc: 'Gerador e Folhas A4', icon: Tag, count: 'Padrão' },
             { id: 'recipes', label: '8. Fichas Técnicas', desc: 'Receitas Ilustradas', icon: ChefHat, count: `${RECIPES_DATA.length}` },
             { id: 'illustrator', label: '9. Estúdio de Ilustração', desc: 'Fotos Reais & Anotações', icon: Palette, count: 'Editor' },
-          ].map((item) => {
+          ].filter((item) => isManager || staffVisibleCategories(empSector).includes(item.id as DocumentCategory)).map((item) => {
             const Icon = item.icon;
             const isActive = currentCategory === item.id;
             return (

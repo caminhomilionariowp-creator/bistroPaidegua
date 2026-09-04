@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DocumentCategory, ResponsibleLeader, ChecklistItemData, EmployeeAccount } from './types';
+import { DocumentCategory, ResponsibleLeader, ChecklistItemData, EmployeeAccount, staffVisibleCategories } from './types';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { DossierViewer } from './components/DossierViewer';
@@ -75,6 +75,17 @@ export default function App() {
     window.addEventListener('bistro:sync', onSync);
     return () => window.removeEventListener('bistro:sync', onSync);
   }, []);
+
+  // Não-gestor: nunca deixa a categoria ativa ficar num módulo que ele não vê no menu
+  // (troca de funcionário, sessão restaurada, etc. podiam deixar a tela num acervo de gestão).
+  useEffect(() => {
+    if (!session) return;
+    const isManager = session.isManager || session.primarySector === 'gerencia';
+    if (!isManager && !staffVisibleCategories(session.primarySector).includes(currentCategory)) {
+      setCurrentCategory('posto');
+      setSelectedItemId(undefined);
+    }
+  }, [session, currentCategory]);
 
   const handlePrint = () => {
     window.print();

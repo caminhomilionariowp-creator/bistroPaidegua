@@ -9,7 +9,7 @@ import {
   Tags,
   Menu,
 } from 'lucide-react';
-import { DocumentCategory, EmployeeAccount } from '../types';
+import { DocumentCategory, EmployeeAccount, staffVisibleCategories } from '../types';
 import { CharacterAvatar } from './Characters';
 import { BrandLogo } from './BrandLogo';
 
@@ -48,6 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
     isManager: true,
     active: true
   };
+  const isManager = !!(activeEmp.isManager || activeEmp.primarySector === 'gerencia');
 
   return (
     <header className="no-print sticky top-0 z-40 bg-stone-900 border-b border-stone-800 text-stone-100 shadow-md">
@@ -89,7 +90,9 @@ export const Header: React.FC<HeaderProps> = ({
               { id: 'posto', label: 'Posto', icon: HardHat },
               { id: 'estoque', label: 'Estoque', icon: Thermometer },
               { id: 'rastreabilidade', label: 'Rastreab.', icon: Tags },
-            ].map((tab) => {
+            ]
+              .filter((tab) => isManager || staffVisibleCategories(activeEmp.primarySector).includes(tab.id as DocumentCategory))
+              .map((tab) => {
               const Icon = tab.icon;
               const isActive = currentCategory === tab.id;
               return (
