@@ -34,6 +34,7 @@ import { JOB_ROLES_DATA, JobRoleDescriptor } from '../data/jobRolesData';
 import { loadEmployees } from '../data/teamData';
 import { CharacterAvatar, IllustratedStamp } from './Characters';
 import { BrandLogo, BrandWatermarkOverlay } from './BrandLogo';
+import { useEditMode } from '../lib/editMode';
 
 interface SectorChecklistProps {
   items: ChecklistItemData[];
@@ -79,6 +80,20 @@ export const SectorChecklist: React.FC<SectorChecklistProps> = ({
   onOpenLoginModal
 }) => {
   const isManager = !!(currentEmployee?.isManager || currentEmployee?.primarySector === 'gerencia');
+  const { canEdit, editing } = useEditMode();
+  const editItems = canEdit && editing;
+
+  const handleEditField = (id: string, field: keyof ChecklistItemData, value: string | boolean) => {
+    const updated = items.map((it) => (it.id === id ? { ...it, [field]: value } : it));
+    onUpdateItems(updated);
+    saveChecklistItems(updated);
+  };
+  const handleRemoveItem = (id: string) => {
+    if (!window.confirm('Remover este tópico do checklist?')) return;
+    const updated = items.filter((it) => it.id !== id);
+    onUpdateItems(updated);
+    saveChecklistItems(updated);
+  };
 
   // Main view mode: 'sector_checklist' (standard sector items) vs 'role_tasks' (extracted role responsibilities)
   const [viewMode, setViewMode] = useState<'sector_checklist' | 'role_tasks'>('sector_checklist');
@@ -1316,13 +1331,57 @@ export const SectorChecklist: React.FC<SectorChecklistProps> = ({
                             )}
                           </div>
 
+                          {editItems ? (
+                            <div className="space-y-1">
+                              <input
+                                value={item.title}
+                                onChange={(e) => handleEditField(item.id, 'title', e.target.value)}
+                                className="w-full font-bold text-xs sm:text-sm text-stone-900 bg-emerald-50 border border-emerald-300 rounded px-1.5 py-1 focus:outline-hidden"
+                              />
+                              <input
+                                value={item.description}
+                                onChange={(e) => handleEditField(item.id, 'description', e.target.value)}
+                                placeholder="Descrição / instrução"
+                                className="w-full text-[11px] text-stone-600 bg-white border border-stone-200 rounded px-1.5 py-1 focus:outline-hidden"
+                              />
+                              <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                                <select
+                                  value={item.shift}
+                                  onChange={(e) => handleEditField(item.id, 'shift', e.target.value)}
+                                  className="bg-white border border-stone-200 rounded px-1 py-0.5"
+                                >
+                                  <option value="abertura">Abertura</option>
+                                  <option value="servico">Serviço</option>
+                                  <option value="fechamento">Fechamento</option>
+                                  <option value="geral">Geral</option>
+                                </select>
+                                <label className="flex items-center gap-1 text-stone-600">
+                                  <input
+                                    type="checkbox"
+                                    checked={item.critical}
+                                    onChange={(e) => handleEditField(item.id, 'critical', e.target.checked)}
+                                  />
+                                  Ponto crítico
+                                </label>
+                                <button
+                                  onClick={() => handleRemoveItem(item.id)}
+                                  className="text-rose-500 hover:text-rose-700 font-bold cursor-pointer ml-auto"
+                                >
+                                  remover tópico
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
                           <h4 className={`font-bold text-xs sm:text-sm text-stone-900 ${isDone ? 'line-through text-stone-500' : ''}`}>
                             {item.title}
                           </h4>
+                          )}
 
+                          {!editItems && (
                           <p className="text-[11px] text-stone-500 leading-relaxed">
                             {item.description}
                           </p>
+                          )}
 
                           {/* Optional Notes / Observations field */}
                           <div className="pt-1">
