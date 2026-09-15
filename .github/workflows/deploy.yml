@@ -1,4 +1,4 @@
-name: Deploy para Netlify
+name: Deploy para Cloudflare Pages
 
 on:
   push:
@@ -29,8 +29,9 @@ jobs:
           VITE_SUPABASE_URL: https://yomipdpqjwdvohscuxfp.supabase.co
           VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvbWlwZHBxandkdm9oc2N1eGZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0Nzc2NjYsImV4cCI6MjEwNDA1MzY2Nn0.YO_9dfrBpuZYT-8r1dnGoLA8rHKJEa-E7Y227laux9k
 
-      - name: Deploy (Netlify)
-        run: npx --yes netlify-cli deploy --prod --dir=dist --site="$NETLIFY_SITE_ID" --message "CI ${GITHUB_SHA::7}"
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: 09a2c3b8-23ed-4ca9-828a-330daf9762c3
+      - name: Deploy (Cloudflare Pages)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=bistropaidegua --branch=main --commit-dirty=true
