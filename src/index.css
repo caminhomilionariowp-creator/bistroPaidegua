@@ -63,10 +63,35 @@
     font-size: 10.5pt;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   .no-print {
     display: none !important;
+  }
+
+  /* A casca do app (header/menu/scroll da tela) não deve limitar o print —
+     senão o navegador imprime só o pedaço que cabia na tela, cortando o resto
+     do documento. Aqui ela vira um bloco comum, do tamanho do conteúdo real. */
+  .app-shell,
+  .app-body,
+  .app-main {
+    display: block !important;
+    position: static !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    max-width: none !important;
+    width: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .print-table-wrap {
+    overflow: visible !important;
   }
 
   .print-only {

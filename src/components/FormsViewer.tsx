@@ -108,7 +108,7 @@ export const FormsViewer: React.FC<FormsViewerProps> = ({ selectedFormId }) => {
 
         {/* Structured Printable Data Table */}
         {currentForm.tableTemplate && (
-          <div className="overflow-x-auto border border-stone-800 rounded-sm mb-6">
+          <div className="print-table-wrap overflow-x-auto border border-stone-800 rounded-sm mb-6">
             <table className="min-w-full divide-y divide-stone-800 text-xs text-left">
               <thead className="bg-stone-200 text-stone-900 font-extrabold uppercase tracking-wider text-[11px]">
                 <tr>

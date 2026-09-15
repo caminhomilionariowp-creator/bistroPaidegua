@@ -214,7 +214,7 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
 
                 {/* Structured Data Tables */}
                 {section.tables && section.tables.map((table, tIdx) => (
-                  <div key={tIdx} className="my-5 overflow-x-auto border border-stone-300 rounded-lg shadow-xs">
+                  <div key={tIdx} className="print-table-wrap my-5 overflow-x-auto border border-stone-300 rounded-lg shadow-xs">
                     <table className="min-w-full divide-y divide-stone-200 text-xs text-left">
                       <thead className="bg-stone-100 text-stone-900 font-bold uppercase tracking-wider">
                         <tr>

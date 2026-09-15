@@ -167,7 +167,7 @@ export default function App() {
 
   return (
     <EditModeProvider canEdit={canEditSystem}>
-    <div className="min-h-screen bg-stone-100 flex flex-col overflow-x-hidden selection:bg-emerald-500 selection:text-white">
+    <div className="app-shell min-h-screen bg-stone-100 flex flex-col overflow-x-hidden selection:bg-emerald-500 selection:text-white">
 
       {/* Top Header */}
       <Header
@@ -182,7 +182,7 @@ export default function App() {
       />
 
       {/* Main Workspace Layout */}
-      <div className="flex-1 flex max-w-7xl w-full mx-auto">
+      <div className="app-body flex-1 flex max-w-7xl w-full mx-auto">
 
         {/* Left Navigation Sidebar */}
         <Sidebar
@@ -200,7 +200,7 @@ export default function App() {
         />
 
         {/* Central Document Workspace */}
-        <main className="flex-1 min-w-0 p-3 sm:p-6 lg:p-8 overflow-y-auto max-w-full">
+        <main className="app-main flex-1 min-w-0 p-3 sm:p-6 lg:p-8 overflow-y-auto max-w-full">
           
           {/* Quick Notice Banner on screen (hidden on print) */}
           <div className="no-print mb-4 sm:mb-6 bg-white border border-stone-300 rounded-xl p-3 sm:p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
