@@ -1,0 +1,20 @@
+name: Manter Supabase acordado
+
+on:
+  schedule:
+    # todo dia às 09:00 UTC (~06:00 em Belem/PA)
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping na tabela estado_app
+        run: |
+          curl -sf "https://yomipdpqjwdvohscuxfp.supabase.co/rest/v1/estado_app?select=chave&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -o /dev/null -w "status: %{http_code}\n"
+        env:
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvbWlwZHBxandkdm9oc2N1eGZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0Nzc2NjYsImV4cCI6MjEwNDA1MzY2Nn0.YO_9dfrBpuZYT-8r1dnGoLA8rHKJEa-E7Y227laux9k
