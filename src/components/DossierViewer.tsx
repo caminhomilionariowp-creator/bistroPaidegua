@@ -31,13 +31,15 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
     <div className="max-w-5xl mx-auto space-y-8 pb-16 relative">
       
       {/* Printable Cover Page with Official Branding */}
-      <div data-print-fit="landscape" className="bg-white border border-stone-300 rounded-2xl p-8 sm:p-12 shadow-paper relative overflow-hidden bg-blueprint-grid">
+      <div className="bg-white border border-stone-300 rounded-2xl p-8 sm:p-12 shadow-paper relative overflow-hidden bg-blueprint-grid">
         {/* Subtle Watermark in Background */}
         <BrandWatermarkOverlay opacity={0.035} />
-        
+
+        {/* A capa (topo até o "A Decisão Central") é a folha A3 nº1; abas e seções ficam de fora */}
+        <div data-print-fit="landscape">
         {/* Top Marajoara Color Accent Strip */}
         <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-red-600 via-stone-900 to-sky-500"></div>
-        
+
         {/* Header with Official Brand Logo & Meta */}
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between border-b border-stone-200 pb-8 mb-8 gap-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-6">
@@ -112,6 +114,7 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
               <span className="font-bold text-white">A Decisão Central:</span> Não se acelera o caos. A expansão de delivery, marketing e novas vendas está pausada até a operação se estabilizar. O negócio precisa deixar de depender de "quem sabe fazer" e passar a funcionar por sistema.
             </div>
           </div>
+        </div>
         </div>
 
         {/* Navigation Tabs for Master Dossier */}
