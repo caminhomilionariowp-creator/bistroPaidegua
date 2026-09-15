@@ -35,28 +35,17 @@
   }
 }
 
+/* @page precisa ficar no nível raiz da folha de estilos — dentro de @media print
+   o Chrome ignora o "size" e imprime no tamanho padrão da impressora/PDF.
+   O tamanho real (paisagem/retrato) é decidido em tempo de impressão pelo
+   printFit.ts, que reescreve esta regra via <style id="print-page-size-style">. */
+@page {
+  size: A3 landscape;
+  margin: 8mm;
+}
+
 /* Print Optimization - A3 Real Scale (297mm x 420mm) & A4 */
 @media print {
-  @page {
-    size: A3 landscape;
-    margin: 8mm;
-  }
-
-  @page a3-landscape-page {
-    size: 420mm 297mm;
-    margin: 8mm;
-  }
-
-  @page a3-portrait-page {
-    size: 297mm 420mm;
-    margin: 8mm;
-  }
-
-  @page a4-portrait-page {
-    size: 210mm 297mm;
-    margin: 8mm;
-  }
-
   html, body {
     background: #ffffff !important;
     color: #000000 !important;
@@ -108,29 +97,6 @@
     break-inside: avoid;
   }
 
-  .a3-landscape-sheet {
-    page: a3-landscape-page;
-    width: 404mm !important;
-    min-height: 281mm !important;
-    margin: 0 !important;
-    padding: 8mm !important;
-    box-sizing: border-box !important;
-    page-break-after: always;
-    break-after: page;
-    overflow: visible !important;
-  }
-
-  .a4-portrait-sheet {
-    page: a4-portrait-page;
-    width: 194mm !important;
-    margin: 0 !important;
-    padding: 6mm !important;
-    box-sizing: border-box !important;
-    page-break-after: always;
-    break-after: page;
-    overflow: visible !important;
-  }
-
   /* Todo documento oficial vira exatamente 1 folha A3 — o encolhimento pra
      caber é feito em JS (src/lib/printFit.ts); isto aqui é a rede de segurança:
      mesmo que o JS não rode, o conteúdo é cortado no tamanho da folha em vez
@@ -151,13 +117,11 @@
   }
 
   [data-print-fit="landscape"] {
-    page: a3-landscape-page;
     width: 404mm !important;
     height: 281mm !important;
   }
 
   [data-print-fit="portrait"] {
-    page: a3-portrait-page;
     width: 281mm !important;
     height: 404mm !important;
   }
