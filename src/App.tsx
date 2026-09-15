@@ -26,9 +26,11 @@ import { EditModeProvider } from './lib/editMode';
 import { EditModeBar } from './components/EditModeBar';
 import { initSync } from './lib/db';
 import { SyncBadge } from './components/SyncBadge';
+import { usePrintFit } from './lib/printFit';
 import { Printer, Sparkles, BookOpen, Layers, FileText, CheckCircle2, Tag, ChefHat, Palette, Users, CheckSquare } from 'lucide-react';
 
 export default function App() {
+  usePrintFit();
   const [currentCategory, setCurrentCategory] = useState<DocumentCategory>('painel');
   const [selectedItemId, setSelectedItemId] = useState<string | undefined>(undefined);
   const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(false);

@@ -31,7 +31,7 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
     <div className="max-w-5xl mx-auto space-y-8 pb-16 relative">
       
       {/* Printable Cover Page with Official Branding */}
-      <div className="bg-white border border-stone-300 rounded-2xl p-8 sm:p-12 shadow-paper relative overflow-hidden bg-blueprint-grid">
+      <div data-print-fit="landscape" className="bg-white border border-stone-300 rounded-2xl p-8 sm:p-12 shadow-paper relative overflow-hidden bg-blueprint-grid">
         {/* Subtle Watermark in Background */}
         <BrandWatermarkOverlay opacity={0.035} />
         
@@ -155,10 +155,11 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
         {activeTab === 'text' && (
           <div className="space-y-10">
             {MASTER_DOSSIER_SECTIONS.map((section) => (
-              <div 
-                key={section.id} 
+              <div
+                key={section.id}
                 id={section.id}
-                className="pt-6 border-t border-stone-200 first:border-t-0 first:pt-0 page-break-inside-avoid"
+                data-print-fit="landscape"
+                className="pt-6 print:p-10 border-t border-stone-200 first:border-t-0 first:pt-0"
               >
                 <div className="flex items-baseline space-x-2 mb-3">
                   <span className="text-xs font-mono font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
@@ -246,7 +247,7 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
 
         {/* Content Tab: Photographic Audit */}
         {activeTab === 'audit' && (
-          <div className="space-y-8">
+          <div data-print-fit="landscape" className="space-y-8 print:p-10">
             <div className="bg-stone-100 border border-stone-300 rounded-lg p-4 text-xs text-stone-700 leading-relaxed">
               <span className="font-bold text-stone-900 block mb-1 text-sm">
                 Regra de Interpretação da Auditoria Fotográfica:
@@ -325,7 +326,7 @@ export const DossierViewer: React.FC<DossierViewerProps> = ({ onOpenIllustrator 
 
         {/* Content Tab: Formal Signatures and Version Control */}
         {activeTab === 'signatures' && (
-          <div className="space-y-8 pt-4">
+          <div data-print-fit="landscape" className="space-y-8 pt-4 print:p-10">
             <div className="bg-stone-50 border border-stone-300 rounded-xl p-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-stone-900 mb-4 flex items-center space-x-2">
                 <CheckCircle2 className="w-5 h-5 text-emerald-600" />

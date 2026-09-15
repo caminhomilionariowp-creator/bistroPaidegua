@@ -116,14 +116,15 @@ export const PosterStudio: React.FC<PosterStudioProps> = ({
     const leader = (team && team.length > 0 ? team.find(t => t.sectorId === poster.sectorId) || team[0] : null) || DEFAULT_TEAM_MEMBERS[0];
 
     return (
-      <div 
+      <div
         key={poster.id}
-        className={`bg-white border-2 border-stone-800 shadow-paper relative bg-blueprint-grid overflow-hidden flex flex-col justify-between ${
-          isPrintView 
-            ? 'a3-landscape-sheet' 
-            : printSize === 'A3' 
-              ? 'rounded-2xl p-5 sm:p-7 lg:p-8 a3-landscape-container' 
-              : 'rounded-xl p-5 sm:p-6 max-w-4xl mx-auto'
+        data-print-fit={isPrintView ? (poster.orientation === 'portrait' ? 'portrait' : 'landscape') : undefined}
+        className={`bg-white border-2 border-stone-800 shadow-paper relative bg-blueprint-grid flex flex-col justify-between ${
+          isPrintView
+            ? 'p-8'
+            : printSize === 'A3'
+              ? 'rounded-2xl p-5 sm:p-7 lg:p-8 a3-landscape-container overflow-hidden'
+              : 'rounded-xl p-5 sm:p-6 max-w-4xl mx-auto overflow-hidden'
         }`}
       >
         {/* Subtle Watermark in background */}
@@ -764,15 +765,15 @@ export const PosterStudio: React.FC<PosterStudioProps> = ({
 
       </div>
 
-      {/* RENDER ACTIVE POSTER (FOR SCREEN & SINGLE PRINT) */}
-      {!isBatchPrinting && renderPosterContent(currentPoster)}
+      {/* PRÉVIA NA TELA (sempre o cartaz ativo) */}
+      <div className="no-print">{renderPosterContent(currentPoster)}</div>
 
-      {/* RENDER ALL 6 POSTERS (WHEN BATCH PRINTING) */}
-      {isBatchPrinting && (
-        <div className="space-y-8">
-          {POSTERS_DATA.map((poster) => renderPosterContent(poster, true))}
-        </div>
-      )}
+      {/* VERSÃO DE IMPRESSÃO — sempre no tamanho real A3, nunca a prévia da tela */}
+      <div className="print-only">
+        {isBatchPrinting
+          ? POSTERS_DATA.map((poster) => renderPosterContent(poster, true))
+          : renderPosterContent(currentPoster, true)}
+      </div>
 
     </div>
   );
