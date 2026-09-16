@@ -6,6 +6,11 @@ import { useEffect } from 'react';
 
 const MM_TO_PX = 96 / 25.4;
 
+/** Margem de segurança: encolhe um pouco além da conta "exata" — o Chrome real
+ *  usa margens/áreas úteis que variam (impressora, driver, versão), então uma
+ *  folga aqui é o que garante caber numa folha só na prática, não só na conta. */
+const SAFETY = 0.7;
+
 /** Largura/altura "de design" — a folha SEMPRE é montada nesse tamanho fixo
  *  (é o que garante que grades responsivas tipo md:grid-cols-3 caiam sempre
  *  no mesmo breakpoint, iguais à tela). O tamanho final na página real é
@@ -62,8 +67,8 @@ const applyFit = () => {
     el.style.width = `${designWpx}px`;
     const naturalH = el.scrollHeight || designHpx;
 
-    const widthScale = realAvailableW / designWpx;
-    const heightScale = designHpx / naturalH;
+    const widthScale = (realAvailableW * SAFETY) / designWpx;
+    const heightScale = (designHpx * SAFETY) / naturalH;
     const scale = Math.min(1, widthScale, heightScale);
 
     // "zoom" (não "transform: scale") de propósito: transform só re-pinta
