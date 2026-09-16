@@ -34,7 +34,23 @@ const setPageSize = (orientation: 'landscape' | 'portrait') => {
   styleEl.textContent = `@page { size: A3 ${orientation}; margin: 8mm; }`;
 };
 
+/** Elementos só-impressão (ex.: PosterStudio) dependem do CSS @media print pra
+ *  ficar visíveis — mas na hora do "beforeprint" isso às vezes ainda não foi
+ *  aplicado quando medimos o tamanho, e a folha é medida com 0px de altura
+ *  (aí o encolhimento erra feio: conteúdo minúsculo, sobra de página em branco).
+ *  Forçamos a visibilidade aqui, antes de medir, pra não depender dessa corrida. */
+const forcePrintOnlyVisible = () => {
+  document
+    .querySelectorAll<HTMLElement>('.print-only')
+    .forEach((el) => el.style.setProperty('display', 'block', 'important'));
+};
+
+const releasePrintOnlyVisible = () => {
+  document.querySelectorAll<HTMLElement>('.print-only').forEach((el) => el.style.removeProperty('display'));
+};
+
 const applyFit = () => {
+  forcePrintOnlyVisible();
   const sheets = document.querySelectorAll<HTMLElement>('[data-print-fit]');
   const dominant = sheets[0]?.dataset.printFit === 'portrait' ? 'portrait' : 'landscape';
   setPageSize(dominant);
@@ -62,6 +78,7 @@ const applyFit = () => {
 
 const clearAllFits = () => {
   document.querySelectorAll<HTMLElement>('[data-print-fit]').forEach(clearFit);
+  releasePrintOnlyVisible();
 };
 
 let listenersAttached = false;
