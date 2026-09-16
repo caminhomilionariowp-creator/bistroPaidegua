@@ -33,6 +33,15 @@
     max-width: 850px;
     min-height: auto;
   }
+
+  /* Rolagem funcional, barra invisível (visual mais moderno/limpo) */
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* @page precisa ficar no nível raiz da folha de estilos — dentro de @media print

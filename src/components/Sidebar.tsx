@@ -98,14 +98,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       <aside
-        className={`no-print bg-white border-r border-stone-200 flex-col overflow-y-auto
+        className={`no-print bg-white border-r border-stone-200 flex-col
           fixed top-0 left-0 z-50 w-[86vw] max-w-xs h-full shadow-2xl
           lg:flex lg:sticky lg:top-16 lg:z-auto lg:w-72 lg:max-w-none lg:h-[calc(100vh-4rem)] lg:shadow-none
           ${isOpen ? 'flex' : 'hidden'}`}
       >
 
       {/* Brand Identity Header in Sidebar */}
-      <div className="p-4 bg-gradient-to-b from-stone-900 to-stone-950 text-white border-b border-stone-800 flex flex-col items-center justify-center text-center relative overflow-hidden">
+      <div className="shrink-0 p-4 bg-gradient-to-b from-stone-900 to-stone-950 text-white border-b border-stone-800 flex flex-col items-center justify-center text-center relative overflow-hidden">
         {/* Subtle background glow */}
         <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/10 rounded-full blur-xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none" />
@@ -132,7 +132,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Active Employee Station Card in Sidebar */}
       {currentEmployee && (
-        <div className="p-3.5 bg-stone-900 text-white border-b border-stone-800 space-y-2">
+        <div className="shrink-0 p-3.5 bg-stone-900 text-white border-b border-stone-800 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-mono uppercase font-bold text-emerald-400 tracking-wider flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -173,12 +173,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       )}
 
+      {/* Área rolável: lista de módulos + explorador de sub-itens do módulo ativo */}
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
+
       {/* Category Selection Section */}
       <div className="p-4 border-b border-stone-200 bg-stone-50/70">
         <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-2.5">
           Conjunto de Documentos Oficiais
         </h3>
-        
+
         {!isManager && (
           <p className="text-[10px] text-stone-400 mb-2 leading-snug">
             Seu acesso mostra só o seu posto, o checklist do setor e as ferramentas do dia a dia da sua função.
@@ -231,7 +234,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Sub-item Explorer with Sector Highlights */}
-      <div className="flex-1 p-4 overflow-y-auto">
+      <div className="p-4">
         {currentCategory === 'dossier' && (
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -428,8 +431,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
+      </div>
+
       {/* Footer Rule Callout */}
-      <div className="p-3 border-t border-stone-200 bg-stone-900 text-stone-200 text-xs">
+      <div className="shrink-0 p-3 border-t border-stone-200 bg-stone-900 text-stone-200 text-xs">
         <div className="flex items-center space-x-1.5 text-amber-400 font-bold text-[11px] mb-1">
           <AlertTriangle className="w-3.5 h-3.5" />
           <span>Regra Central do Projeto</span>

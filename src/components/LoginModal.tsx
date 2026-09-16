@@ -40,6 +40,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   const [pinInput, setPinInput] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [sectorFilter, setSectorFilter] = useState<'todos' | 'cozinha' | 'estoque' | 'salao' | 'caixa' | 'gerencia'>('todos');
+  const isManager = !!(currentEmployee.isManager || currentEmployee.primarySector === 'gerencia');
 
   if (!isOpen) return null;
 
@@ -66,7 +67,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           onSelectEmployee(selectedTarget);
           onClose();
         } else {
-          setErrorMsg('PIN incorreto! Tente novamente ou use o PIN de demonstração.');
+          setErrorMsg('PIN incorreto! Tente novamente.');
         }
       }
     }
@@ -218,7 +219,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
                         <div className="flex items-center justify-between text-[10px] text-stone-500 pt-0.5 font-mono">
                           <span>Crachá: {emp.badgeNumber}</span>
-                          <span className="text-emerald-700 font-bold">PIN: {emp.pin}</span>
+                          {isManager && <span className="text-emerald-700 font-bold">PIN: {emp.pin}</span>}
                         </div>
                       </div>
                     </div>
@@ -244,7 +245,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                     Setor: {selectedTarget.primarySector.toUpperCase()}
                   </div>
                   <p className="text-[10px] text-stone-500">
-                    Digite o PIN de 4 dígitos (Sugestão: <strong className="font-mono text-stone-900">{selectedTarget.pin}</strong>)
+                    {isManager
+                      ? <>Digite o PIN de 4 dígitos (Sugestão: <strong className="font-mono text-stone-900">{selectedTarget.pin}</strong>)</>
+                      : 'Digite o PIN de 4 dígitos'}
                   </p>
                 </div>
 
@@ -329,7 +332,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            {(currentEmployee.isManager || currentEmployee.primarySector === 'gerencia') && (
+            {isManager && (
               <button
                 onClick={() => {
                   onClose();
