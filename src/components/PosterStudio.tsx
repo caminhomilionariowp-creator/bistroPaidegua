@@ -119,12 +119,12 @@ export const PosterStudio: React.FC<PosterStudioProps> = ({
       <div
         key={poster.id}
         data-print-fit={isPrintView ? (poster.orientation === 'portrait' ? 'portrait' : 'landscape') : undefined}
-        className={`bg-white border-2 border-stone-800 shadow-paper relative bg-blueprint-grid flex flex-col justify-between ${
+        className={`bg-white border-2 border-stone-800 shadow-paper relative bg-blueprint-grid flex flex-col ${
           isPrintView
-            ? 'p-8'
+            ? 'justify-start gap-4 p-8'
             : printSize === 'A3'
-              ? 'rounded-2xl p-5 sm:p-7 lg:p-8 a3-landscape-container overflow-hidden'
-              : 'rounded-xl p-5 sm:p-6 max-w-4xl mx-auto overflow-hidden'
+              ? 'justify-between rounded-2xl p-5 sm:p-7 lg:p-8 a3-landscape-container overflow-hidden'
+              : 'justify-between rounded-xl p-5 sm:p-6 max-w-4xl mx-auto overflow-hidden'
         }`}
       >
         {/* Subtle Watermark in background */}
