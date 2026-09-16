@@ -23,6 +23,8 @@ const DESIGN_MM: Record<'landscape' | 'portrait', { w: number; h: number }> = {
 const clearFit = (el: HTMLElement) => {
   (el.style as any).zoom = '';
   (el.style as any).width = el.dataset.printFitOrigWidth || '';
+  el.style.marginTop = '';
+  el.style.marginLeft = '';
   delete el.dataset.printFitOrigWidth;
 };
 
@@ -77,6 +79,17 @@ const applyFit = () => {
     // ORIGINAL (a altura "errada" citada em bugs conhecidos do Chrome pra
     // print + transform). zoom encolhe de verdade o espaço ocupado.
     if (scale < 1) (el.style as any).zoom = String(scale);
+
+    // zoom encolhe as duas dimensões igualmente, então quando a folha "sobra"
+    // mais numa direção que na outra, o conteúdo fica jogado no canto
+    // superior esquerdo. Centraliza a folga (horizontal e vertical) em vez
+    // de deixar tudo empurrado pra um lado só.
+    const renderedW = designWpx * scale;
+    const renderedH = naturalH * scale;
+    const leftoverW = Math.max(0, realAvailableW - renderedW);
+    const leftoverH = Math.max(0, designHpx - renderedH);
+    el.style.marginLeft = `${leftoverW / 2 / scale}px`;
+    el.style.marginTop = `${leftoverH / 2 / scale}px`;
   });
 };
 
