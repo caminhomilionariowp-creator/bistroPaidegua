@@ -21,21 +21,6 @@ const clearFit = (el: HTMLElement) => {
   delete el.dataset.printFitOrigWidth;
 };
 
-const PAGE_STYLE_ID = 'print-page-size-style';
-
-/** @page só funciona de verdade no nível raiz da folha de estilos — por isso
- *  reescrevemos essa regra aqui em vez de depender de @page nomeada em CSS
- *  (o navegador ignora "page: <nome>" com muita frequência). */
-const setPageSize = (orientation: 'landscape' | 'portrait') => {
-  let styleEl = document.getElementById(PAGE_STYLE_ID) as HTMLStyleElement | null;
-  if (!styleEl) {
-    styleEl = document.createElement('style');
-    styleEl.id = PAGE_STYLE_ID;
-    document.head.appendChild(styleEl);
-  }
-  styleEl.textContent = `@page { size: A3 ${orientation}; margin: 8mm; }`;
-};
-
 /** Elementos só-impressão (ex.: PosterStudio) dependem do CSS @media print pra
  *  ficar visíveis — mas na hora do "beforeprint" isso às vezes ainda não foi
  *  aplicado quando medimos o tamanho, e a folha é medida com 0px de altura
@@ -54,8 +39,6 @@ const releasePrintOnlyVisible = () => {
 const applyFit = () => {
   forcePrintOnlyVisible();
   const sheets = document.querySelectorAll<HTMLElement>('[data-print-fit]');
-  const dominant = sheets[0]?.dataset.printFit === 'portrait' ? 'portrait' : 'landscape';
-  setPageSize(dominant);
   sheets.forEach((el) => {
     const orientation = (el.dataset.printFit === 'portrait' ? 'portrait' : 'landscape') as
       | 'landscape'

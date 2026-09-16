@@ -44,12 +44,16 @@
   }
 }
 
-/* @page precisa ficar no nível raiz da folha de estilos — dentro de @media print
-   o Chrome ignora o "size" e imprime no tamanho padrão da impressora/PDF.
-   O tamanho real (paisagem/retrato) é decidido em tempo de impressão pelo
-   printFit.ts, que reescreve esta regra via <style id="print-page-size-style">. */
+/* De propósito SEM "size" aqui: o Chrome tem um bug antigo e documentado
+   (https://groups.google.com/a/chromium.org/g/chromium-bugs/c/dTz8xlegaJA)
+   em que "@page { size: ... landscape }" não é respeitado — ele imprime em
+   retrato mesmo assim — e, pior, ao "assumir" que está controlando o tamanho,
+   o Chrome esconde a opção manual de Orientação/Tamanho do papel no diálogo
+   de impressão. Deixando sem "size", essa opção fica disponível pro usuário
+   escolher "Paisagem" à mão (o que sempre funciona corretamente). O encaixe
+   do conteúdo (src/lib/printFit.ts) já mede o espaço real disponível, então
+   funciona com qualquer papel/orientação que for escolhido no diálogo. */
 @page {
-  size: A3 landscape;
   margin: 8mm;
 }
 
