@@ -71,7 +71,7 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
             }`}
           >
             <FileText className="w-3.5 h-3.5 text-orange-600" />
-            <span>Ficha Individual (A4)</span>
+            <span>Ficha Individual (A3)</span>
           </button>
           <button
             onClick={() => setViewMode('mural_rechaud')}
