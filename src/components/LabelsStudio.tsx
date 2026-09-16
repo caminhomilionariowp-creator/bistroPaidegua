@@ -231,7 +231,7 @@ export const LabelsStudio: React.FC = () => {
       </div>
 
       {/* The Printable Sticker Sheet (A4 Grid) */}
-      <div data-print-fit="portrait" className="bg-white border-2 border-stone-400 rounded-xl p-8 shadow-paper bg-blueprint-grid">
+      <div data-print-fit="landscape" className="bg-white border-2 border-stone-400 rounded-xl p-8 shadow-paper bg-blueprint-grid">
         
         <div className="border-b-2 border-stone-800 pb-3 mb-6 flex items-center justify-between">
           <div>

@@ -129,7 +129,7 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
           {/* Official Illustrated Technical Sheet (A4 Printable) */}
           <div 
             id="printable-recipe"
-            data-print-fit="portrait"
+            data-print-fit="landscape"
             className="bg-white border-2 border-stone-800 rounded-xl p-6 sm:p-8 shadow-paper relative overflow-hidden"
           >
             {/* Subtle Brand Watermark */}
