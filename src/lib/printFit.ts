@@ -6,10 +6,15 @@ import { useEffect } from 'react';
 
 const MM_TO_PX = 96 / 25.4;
 
-/** Área útil da folha (tamanho A3 menos as margens de 8mm de cada lado). */
-const USABLE_MM: Record<'landscape' | 'portrait', { w: number; h: number }> = {
-  landscape: { w: 420 - 16, h: 297 - 16 },
-  portrait: { w: 297 - 16, h: 420 - 16 },
+/** Altura útil da folha (A3 menos 8mm de margem em cima/embaixo).
+ *  Não fixamos a LARGURA em px: o diálogo de impressão do navegador nem
+ *  sempre respeita o @page (às vezes cai no papel padrão dele, ex.: A4)
+ *  — supor uma largura fixa cortava o conteúdo quando isso acontecia.
+ *  A altura em compensação é segura de fixar: A3 paisagem e A4 retrato
+ *  têm a mesma altura física (297mm), então o valor serve pros dois casos. */
+const USABLE_H_MM: Record<'landscape' | 'portrait', number> = {
+  landscape: 297 - 16,
+  portrait: 420 - 16,
 };
 
 const clearFit = (el: HTMLElement) => {
@@ -58,18 +63,18 @@ const applyFit = () => {
     const orientation = (el.dataset.printFit === 'portrait' ? 'portrait' : 'landscape') as
       | 'landscape'
       | 'portrait';
-    const usable = USABLE_MM[orientation];
-    const targetWpx = usable.w * MM_TO_PX;
-    const targetHpx = usable.h * MM_TO_PX;
 
-    // Layout na largura real da folha antes de medir a altura natural.
+    // Largura: 100% da folha real que o navegador reservou (nunca supomos um
+    // valor fixo — é isso que evita cortar o lado direito quando o papel
+    // escolhido não é exatamente A3). A altura (via CSS, .print-fit-h-*)
+    // é que fica travada num valor físico confiável pra paginação.
     el.dataset.printFitOrigWidth = el.style.width;
     el.style.transform = '';
-    el.style.width = `${targetWpx}px`;
+    el.style.width = '100%';
 
-    const naturalW = el.scrollWidth || targetWpx;
-    const naturalH = el.scrollHeight || targetHpx;
-    const scale = Math.min(1, targetWpx / naturalW, targetHpx / naturalH);
+    const targetHpx = USABLE_H_MM[orientation] * MM_TO_PX;
+    const naturalH = el.scrollHeight;
+    const scale = naturalH > 0 ? Math.min(1, targetHpx / naturalH) : 1;
 
     el.style.transformOrigin = 'top left';
     el.style.transform = scale < 1 ? `scale(${scale})` : '';

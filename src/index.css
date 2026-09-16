@@ -125,13 +125,20 @@
     break-after: auto !important;
   }
 
+  /* Largura: 100% da folha real (nunca um valor mm fixo — o diálogo de
+     impressão nem sempre usa o papel A3 que pedimos, e um valor fixo cortava
+     o conteúdo quando isso acontecia). Altura: travada num valor físico —
+     A3 paisagem e A4 retrato têm a mesma altura (297mm), então serve pros
+     dois casos comuns de papel que o navegador pode escolher. */
+  [data-print-fit] {
+    width: 100% !important;
+  }
+
   [data-print-fit="landscape"] {
-    width: 404mm !important;
     height: 281mm !important;
   }
 
   [data-print-fit="portrait"] {
-    width: 281mm !important;
     height: 404mm !important;
   }
 }
