@@ -106,10 +106,13 @@
     break-inside: avoid;
   }
 
-  /* Todo documento oficial vira exatamente 1 folha A3 — o encolhimento pra
-     caber é feito em JS (src/lib/printFit.ts); isto aqui é a rede de segurança:
-     mesmo que o JS não rode, o conteúdo é cortado no tamanho da folha em vez
-     de vazar pra uma 2ª página. */
+  /* Todo documento oficial vira exatamente 1 folha A3. O tamanho (largura de
+     design fixa + scale() pra caber na folha real) é todo calculado em JS
+     (src/lib/printFit.ts) — de propósito SEM largura/altura/overflow fixados
+     aqui em CSS: um "overflow:hidden" no mesmo elemento que recebe o scale()
+     corta o conteúdo pelo tamanho ORIGINAL (pré-encolhimento), antes do
+     scale ter chance de mostrar ele inteiro — foi isso que cortava o rodapé
+     dos cartazes mesmo com o encolhimento certo sendo calculado. */
   [data-print-fit] {
     box-sizing: border-box !important;
     margin: 0 auto !important;
@@ -117,29 +120,11 @@
     break-after: page !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    overflow: hidden !important;
   }
 
   [data-print-fit]:last-child {
     page-break-after: auto !important;
     break-after: auto !important;
-  }
-
-  /* Largura: 100% da folha real (nunca um valor mm fixo — o diálogo de
-     impressão nem sempre usa o papel A3 que pedimos, e um valor fixo cortava
-     o conteúdo quando isso acontecia). Altura: travada num valor físico —
-     A3 paisagem e A4 retrato têm a mesma altura (297mm), então serve pros
-     dois casos comuns de papel que o navegador pode escolher. */
-  [data-print-fit] {
-    width: 100% !important;
-  }
-
-  [data-print-fit="landscape"] {
-    height: 281mm !important;
-  }
-
-  [data-print-fit="portrait"] {
-    height: 404mm !important;
   }
 }
 

@@ -237,7 +237,7 @@ export const PosterStudio: React.FC<PosterStudioProps> = ({
                   <CharacterAvatar id="chef_manel" size="sm" customUrl={leader.photoUrl} />
                   <div>
                     <span className="font-extrabold text-emerald-950 text-xs block">
-                      {poster.characterTitle}:
+                      {leader.name} • {leader.role}:
                     </span>
                     <p className="text-xs text-emerald-900 italic leading-tight">
                       <Editable multiline path={`poster.${poster.id}.quote`} seed={poster.characterQuote} />
@@ -443,7 +443,7 @@ export const PosterStudio: React.FC<PosterStudioProps> = ({
                   <CharacterAvatar id="dona_flor" size="sm" customUrl={leader.photoUrl} />
                   <div>
                     <span className="font-extrabold text-rose-950 text-xs block">
-                      {poster.characterTitle}:
+                      {leader.name} • {leader.role}:
                     </span>
                     <p className="text-xs text-rose-900 italic leading-tight">
                       <Editable multiline path={`poster.${poster.id}.quote`} seed={poster.characterQuote} />
@@ -493,7 +493,7 @@ export const PosterStudio: React.FC<PosterStudioProps> = ({
                   <CharacterAvatar id="camila_caixa" size="sm" customUrl={leader.photoUrl} />
                   <div>
                     <span className="font-extrabold text-blue-950 text-xs block">
-                      {poster.characterTitle}:
+                      {leader.name} • {leader.role}:
                     </span>
                     <p className="text-xs text-blue-900 italic leading-tight">
                       <Editable multiline path={`poster.${poster.id}.quote`} seed={poster.characterQuote} />

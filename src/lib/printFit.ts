@@ -6,20 +6,17 @@ import { useEffect } from 'react';
 
 const MM_TO_PX = 96 / 25.4;
 
-/** Altura útil da folha (A3 menos 8mm de margem em cima/embaixo).
- *  Não fixamos a LARGURA em px: o diálogo de impressão do navegador nem
- *  sempre respeita o @page (às vezes cai no papel padrão dele, ex.: A4)
- *  — supor uma largura fixa cortava o conteúdo quando isso acontecia.
- *  A altura em compensação é segura de fixar: A3 paisagem e A4 retrato
- *  têm a mesma altura física (297mm), então o valor serve pros dois casos. */
-const USABLE_H_MM: Record<'landscape' | 'portrait', number> = {
-  landscape: 297 - 16,
-  portrait: 420 - 16,
+/** Largura/altura "de design" — a folha SEMPRE é montada nesse tamanho fixo
+ *  (é o que garante que grades responsivas tipo md:grid-cols-3 caiam sempre
+ *  no mesmo breakpoint, iguais à tela). O tamanho final na página real é
+ *  feito depois, com um único scale() que encolhe esse design pra caber. */
+const DESIGN_MM: Record<'landscape' | 'portrait', { w: number; h: number }> = {
+  landscape: { w: 420 - 16, h: 297 - 16 },
+  portrait: { w: 297 - 16, h: 420 - 16 },
 };
 
 const clearFit = (el: HTMLElement) => {
-  el.style.transform = '';
-  el.style.transformOrigin = '';
+  (el.style as any).zoom = '';
   (el.style as any).width = el.dataset.printFitOrigWidth || '';
   delete el.dataset.printFitOrigWidth;
 };
@@ -63,21 +60,35 @@ const applyFit = () => {
     const orientation = (el.dataset.printFit === 'portrait' ? 'portrait' : 'landscape') as
       | 'landscape'
       | 'portrait';
+    const design = DESIGN_MM[orientation];
+    const designWpx = design.w * MM_TO_PX;
+    const designHpx = design.h * MM_TO_PX;
 
-    // Largura: 100% da folha real que o navegador reservou (nunca supomos um
-    // valor fixo — é isso que evita cortar o lado direito quando o papel
-    // escolhido não é exatamente A3). A altura (via CSS, .print-fit-h-*)
-    // é que fica travada num valor físico confiável pra paginação.
+    // Largura real disponível na folha, o que quer que o navegador tenha
+    // escolhido (nem sempre é A3 — o diálogo de impressão às vezes ignora
+    // o @page e usa o papel padrão dele). Medimos ANTES de fixar a largura
+    // de design no elemento, pra pegar o espaço de verdade do pai.
     el.dataset.printFitOrigWidth = el.style.width;
-    el.style.transform = '';
-    el.style.width = '100%';
+    (el.style as any).zoom = '';
+    el.style.width = '';
+    const realAvailableW = el.parentElement?.clientWidth || designWpx;
 
-    const targetHpx = USABLE_H_MM[orientation] * MM_TO_PX;
-    const naturalH = el.scrollHeight;
-    const scale = naturalH > 0 ? Math.min(1, targetHpx / naturalH) : 1;
+    // Monta o conteúdo sempre na largura de design (garante que grades tipo
+    // md:grid-cols-3 ativem do mesmo jeito que na tela, não dependendo do
+    // papel real escolhido pelo navegador).
+    el.style.width = `${designWpx}px`;
+    const naturalH = el.scrollHeight || designHpx;
 
-    el.style.transformOrigin = 'top left';
-    el.style.transform = scale < 1 ? `scale(${scale})` : '';
+    const widthScale = realAvailableW / designWpx;
+    const heightScale = designHpx / naturalH;
+    const scale = Math.min(1, widthScale, heightScale);
+
+    // "zoom" (não "transform: scale") de propósito: transform só re-pinta
+    // visualmente, não muda o tamanho de layout que o motor de paginação de
+    // impressão enxerga — no Chrome isso corta o conteúdo pelo tamanho
+    // ORIGINAL (a altura "errada" citada em bugs conhecidos do Chrome pra
+    // print + transform). zoom encolhe de verdade o espaço ocupado.
+    if (scale < 1) (el.style as any).zoom = String(scale);
   });
 };
 
