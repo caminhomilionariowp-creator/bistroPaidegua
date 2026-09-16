@@ -184,7 +184,7 @@ export default function App() {
       />
 
       {/* Main Workspace Layout */}
-      <div className="app-body flex-1 flex max-w-7xl w-full mx-auto">
+      <div className="app-body flex-1 flex w-full">
 
         {/* Left Navigation Sidebar */}
         <Sidebar
