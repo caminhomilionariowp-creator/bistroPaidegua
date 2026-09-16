@@ -202,7 +202,7 @@ export default function App() {
         />
 
         {/* Central Document Workspace */}
-        <main className="app-main flex-1 min-w-0 p-3 sm:p-6 lg:p-8 overflow-y-auto max-w-full scrollbar-hide">
+        <main className="app-main flex-1 min-w-0 p-3 sm:p-6 lg:p-8 overflow-y-auto max-w-full scrollbar-hide lg:h-[calc(100vh-4rem)]">
           
           {/* Quick Notice Banner on screen (hidden on print) */}
           <div className="no-print mb-4 sm:mb-6 bg-white border border-stone-300 rounded-xl p-3 sm:p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
