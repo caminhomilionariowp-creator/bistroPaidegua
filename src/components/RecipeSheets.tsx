@@ -38,12 +38,202 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
   const [activeRecipeId, setActiveRecipeId] = useState<string>(
     selectedRecipeId || RECIPES_DATA[0].id
   );
+  const [isBatchPrinting, setIsBatchPrinting] = useState(false);
 
   const currentRecipe = RECIPES_DATA.find((r) => r.id === activeRecipeId) || RECIPES_DATA[0];
 
   const handlePrint = () => {
     window.print();
   };
+
+  const handlePrintAllRecipes = () => {
+    setIsBatchPrinting(true);
+    setTimeout(() => {
+      window.print();
+      setIsBatchPrinting(false);
+    }, 250);
+  };
+
+  const renderRecipeSheet = (recipe: RecipeTechSheet, isPrintView = false) => (
+          <div
+            id={isPrintView ? undefined : "printable-recipe"}
+            data-print-fit={isPrintView ? "portrait" : undefined}
+            className="bg-white border-2 border-stone-800 rounded-xl p-6 sm:p-8 shadow-paper relative overflow-hidden"
+          >
+            {/* Subtle Brand Watermark */}
+            <BrandWatermarkOverlay opacity={0.035} />
+
+            {/* Header Block */}
+            <div className="relative z-10 border-2 border-stone-900 rounded-lg overflow-hidden mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-12 border-b border-stone-900">
+                <div className="sm:col-span-3 p-3 bg-stone-900 text-white flex flex-col justify-center items-center text-center">
+                  <BrandLogo variant="horizontal" size="xs" theme="dark" />
+                  <span className="font-extrabold text-[11px] mt-1 text-amber-400">FICHA TÉCNICA OFICIAL</span>
+                </div>
+                <div className="sm:col-span-6 p-2 flex flex-col justify-center items-center text-center border-y sm:border-y-0 sm:border-r sm:border-l border-stone-900 bg-stone-50">
+                  <span className="text-[10px] font-bold text-stone-500 uppercase">PADRÃO OFICIAL DE PRODUÇÃO & MONTAGEM</span>
+                  <Editable as="h1" path={`recipe.${recipe.id}.name`} seed={recipe.dishName} className="block font-extrabold text-base sm:text-lg text-stone-900 leading-tight" />
+                </div>
+                <div className="sm:col-span-3 p-2 bg-stone-50 flex flex-col justify-center text-[11px] font-mono text-stone-800 space-y-0.5">
+                  <div><span className="font-bold">CÓDIGO:</span> {recipe.code}</div>
+                  <div><span className="font-bold">VERSÃO:</span> {recipe.version}</div>
+                  <div><span className="font-bold">CATEGORIA:</span> {recipe.category}</div>
+                </div>
+              </div>
+
+              {/* Key Metrics Banner */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-stone-300 text-xs bg-stone-100 p-2.5">
+                <div className="flex items-center space-x-2">
+                  <Scale className="w-4 h-4 text-emerald-600" />
+                  <div>
+                    <span className="text-stone-500 block text-[9px] uppercase font-bold">Rendimento:</span>
+                    <span className="font-bold text-stone-900">{recipe.standardYield}</span>
+                  </div>
+                </div>
+                <div className="sm:pl-3 flex items-center space-x-2">
+                  <UtensilsCrossed className="w-4 h-4 text-amber-600" />
+                  <div>
+                    <span className="text-stone-500 block text-[9px] uppercase font-bold">Porção Padrão:</span>
+                    <span className="font-bold text-stone-900">{recipe.portionWeight}</span>
+                  </div>
+                </div>
+                <div className="sm:pl-3 flex items-center space-x-2">
+                  <Clock className="w-4 h-4 text-blue-600" />
+                  <div>
+                    <span className="text-stone-500 block text-[9px] uppercase font-bold">Tempo de Fogo:</span>
+                    <span className="font-bold text-stone-900">{recipe.prepTimeMinutes} min</span>
+                  </div>
+                </div>
+                <div className="sm:pl-3 flex items-center space-x-2">
+                  <DollarSign className="w-4 h-4 text-emerald-700" />
+                  <div>
+                    <span className="text-stone-500 block text-[9px] uppercase font-bold">Custo Estimado:</span>
+                    <span className="font-bold text-emerald-800">{recipe.costEstimate || "Em cálculo"}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 1: Ingredients Table & Equipment */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
+
+              {/* Ingredients Table */}
+              <div className="md:col-span-8">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1 rounded mb-2 flex items-center justify-between">
+                  <span>1. Ingredientes & Pré-preparo (Mise en Place)</span>
+                  <span className="text-[10px] text-stone-500 font-mono">100% Pesado na Balança</span>
+                </h3>
+
+                <div className="border border-stone-300 rounded overflow-hidden">
+                  <table className="min-w-full divide-y divide-stone-200 text-xs text-left">
+                    <thead className="bg-stone-100 font-bold uppercase text-[10px] text-stone-700">
+                      <tr>
+                        <th className="px-3 py-1.5">Ingrediente / Matéria-Prima</th>
+                        <th className="px-3 py-1.5 w-24 text-right">Qtd Bruta</th>
+                        <th className="px-3 py-1.5">Instrução de Pré-Preparo</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-200 bg-white">
+                      {recipe.ingredients.map((ing, idx) => (
+                        <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-stone-50/50'}>
+                          <td className="px-3 py-1.5 font-medium text-stone-900">
+                            <Editable path={`recipe.${recipe.id}.ing.${idx}.item`} seed={ing.item} />
+                          </td>
+                          <td className="px-3 py-1.5 font-bold font-mono text-right text-stone-800">
+                            <Editable path={`recipe.${recipe.id}.ing.${idx}.qty`} seed={`${ing.grossQty} ${ing.unit}`} />
+                          </td>
+                          <td className="px-3 py-1.5 text-stone-600 text-[11px]">
+                            <Editable path={`recipe.${recipe.id}.ing.${idx}.notes`} seed={ing.prePrepNotes || '-'} />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Foto oficial do prato — carregada pela equipe */}
+              <div className="md:col-span-4 flex flex-col justify-between">
+                <PhotoUpload
+                  photoKey={`recipe:${recipe.id}`}
+                  label="Foto Oficial do Prato"
+                  ratio="wide"
+                  caption={`${recipe.dishName} — padrão Bistrô Pai d'Égua`}
+                  onAnnotate={onOpenIllustrator ? () => onOpenIllustrator(recipe.id) : undefined}
+                />
+
+                <div className="mt-3 bg-stone-50 p-2.5 rounded border border-stone-200 text-xs">
+                  <span className="font-bold text-stone-800 block text-[11px] uppercase mb-1">Utensílios Necessários:</span>
+                  <ul className="text-[11px] text-stone-600 space-y-0.5">
+                    {recipe.equipmentUtensils.map((eq, eIdx) => (
+                      <li key={eIdx}>• {eq}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Section 2: Step-by-Step Cooking */}
+            <div className="mb-6">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1 rounded mb-3">
+                2. Modo de Preparo e Cocção (Passo a Passo Rigoroso)
+              </h3>
+
+              <div className="bg-stone-50 border border-stone-300 rounded-lg p-4 space-y-2 text-xs sm:text-sm text-stone-800">
+                <EditableList
+                  path={`recipe.${recipe.id}.steps`}
+                  seed={recipe.stepByStep}
+                  addLabel="Novo passo…"
+                  read={(step, idx) => (
+                    <p key={idx} className="leading-relaxed font-medium">{step}</p>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Section 3: Plating & Safety Alerts */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 page-break-inside-avoid">
+              <div className="bg-amber-50/70 border border-amber-300 rounded-lg p-3.5">
+                <span className="font-bold text-amber-950 block text-xs uppercase mb-1.5 flex items-center space-x-1.5">
+                  <span>🍽️</span>
+                  <span>Padrão de Empratamento & Apresentação</span>
+                </span>
+                <ul className="text-xs text-amber-900 space-y-1">
+                  <EditableList
+                    path={`recipe.${recipe.id}.plating`}
+                    seed={recipe.platingStandard}
+                    addLabel="Novo padrão de montagem…"
+                    read={(pl, pIdx) => <li key={pIdx}>• {pl}</li>}
+                  />
+                </ul>
+              </div>
+
+              <div className="bg-rose-50/70 border border-rose-300 rounded-lg p-3.5">
+                <span className="font-bold text-rose-950 block text-xs uppercase mb-1.5 flex items-center space-x-1.5">
+                  <ShieldAlert className="w-4 h-4 text-rose-600" />
+                  <span>Pontos Críticos de Segurança e Validade</span>
+                </span>
+                <div className="text-xs text-rose-900 space-y-1.5">
+                  <EditableList
+                    path={`recipe.${recipe.id}.safety`}
+                    seed={recipe.criticalSafetyNotes}
+                    addLabel="Novo ponto de segurança…"
+                    read={(note, nIdx) => <p key={nIdx} className="leading-snug">{note}</p>}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Signatures */}
+            <div className="pt-3 border-t-2 border-stone-800 flex justify-between items-center text-xs text-stone-600">
+              <div><span className="font-bold text-stone-900">Elaborado por:</span> {recipe.author}</div>
+              <div><span className="font-bold text-stone-900">Validado por:</span> {recipe.validatedBy}</div>
+              <div className="font-mono text-[10px] text-stone-400">Bistrô Pai d'Égua • Ficha Técnica Oficial</div>
+            </div>
+
+          </div>
+  );
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-16">
@@ -97,13 +287,25 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
           </button>
         </div>
 
-        <button
-          onClick={handlePrint}
-          className="bg-stone-900 hover:bg-orange-600 text-white text-xs font-bold px-3.5 py-2 rounded-lg flex items-center space-x-2 transition-colors shadow-xs"
-        >
-          <Printer className="w-3.5 h-3.5" />
-          <span>Imprimir Documento</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {viewMode === 'individual' && (
+            <button
+              onClick={handlePrintAllRecipes}
+              className="bg-white hover:bg-stone-100 text-stone-800 border border-stone-300 text-xs font-bold px-3.5 py-2 rounded-lg flex items-center space-x-2 transition-colors shadow-xs"
+              title="Imprime as 6 fichas técnicas juntas, uma folha A3 por ficha"
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>Imprimir Todas as Fichas</span>
+            </button>
+          )}
+          <button
+            onClick={handlePrint}
+            className="bg-stone-900 hover:bg-orange-600 text-white text-xs font-bold px-3.5 py-2 rounded-lg flex items-center space-x-2 transition-colors shadow-xs"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>Imprimir Documento</span>
+          </button>
+        </div>
       </div>
 
       {/* VIEW 1: INDIVIDUAL A4 RECIPE SHEET */}
@@ -126,184 +328,14 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
             ))}
           </div>
 
-          {/* Official Illustrated Technical Sheet (A4 Printable) */}
-          <div 
-            id="printable-recipe"
-            data-print-fit="landscape"
-            className="bg-white border-2 border-stone-800 rounded-xl p-6 sm:p-8 shadow-paper relative overflow-hidden"
-          >
-            {/* Subtle Brand Watermark */}
-            <BrandWatermarkOverlay opacity={0.035} />
+          {/* Prévia na tela (sempre a ficha ativa) */}
+          <div className="no-print">{renderRecipeSheet(currentRecipe)}</div>
 
-            {/* Header Block */}
-            <div className="relative z-10 border-2 border-stone-900 rounded-lg overflow-hidden mb-6">
-              <div className="grid grid-cols-1 sm:grid-cols-12 border-b border-stone-900">
-                <div className="sm:col-span-3 p-3 bg-stone-900 text-white flex flex-col justify-center items-center text-center">
-                  <BrandLogo variant="horizontal" size="xs" theme="dark" />
-                  <span className="font-extrabold text-[11px] mt-1 text-amber-400">FICHA TÉCNICA OFICIAL</span>
-                </div>
-                <div className="sm:col-span-6 p-2 flex flex-col justify-center items-center text-center border-y sm:border-y-0 sm:border-r sm:border-l border-stone-900 bg-stone-50">
-                  <span className="text-[10px] font-bold text-stone-500 uppercase">PADRÃO OFICIAL DE PRODUÇÃO & MONTAGEM</span>
-                  <Editable as="h1" path={`recipe.${currentRecipe.id}.name`} seed={currentRecipe.dishName} className="block font-extrabold text-base sm:text-lg text-stone-900 leading-tight" />
-                </div>
-                <div className="sm:col-span-3 p-2 bg-stone-50 flex flex-col justify-center text-[11px] font-mono text-stone-800 space-y-0.5">
-                  <div><span className="font-bold">CÓDIGO:</span> {currentRecipe.code}</div>
-                  <div><span className="font-bold">VERSÃO:</span> {currentRecipe.version}</div>
-                  <div><span className="font-bold">CATEGORIA:</span> {currentRecipe.category}</div>
-                </div>
-              </div>
-
-              {/* Key Metrics Banner */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-stone-300 text-xs bg-stone-100 p-2.5">
-                <div className="flex items-center space-x-2">
-                  <Scale className="w-4 h-4 text-emerald-600" />
-                  <div>
-                    <span className="text-stone-500 block text-[9px] uppercase font-bold">Rendimento:</span>
-                    <span className="font-bold text-stone-900">{currentRecipe.standardYield}</span>
-                  </div>
-                </div>
-                <div className="sm:pl-3 flex items-center space-x-2">
-                  <UtensilsCrossed className="w-4 h-4 text-amber-600" />
-                  <div>
-                    <span className="text-stone-500 block text-[9px] uppercase font-bold">Porção Padrão:</span>
-                    <span className="font-bold text-stone-900">{currentRecipe.portionWeight}</span>
-                  </div>
-                </div>
-                <div className="sm:pl-3 flex items-center space-x-2">
-                  <Clock className="w-4 h-4 text-blue-600" />
-                  <div>
-                    <span className="text-stone-500 block text-[9px] uppercase font-bold">Tempo de Fogo:</span>
-                    <span className="font-bold text-stone-900">{currentRecipe.prepTimeMinutes} min</span>
-                  </div>
-                </div>
-                <div className="sm:pl-3 flex items-center space-x-2">
-                  <DollarSign className="w-4 h-4 text-emerald-700" />
-                  <div>
-                    <span className="text-stone-500 block text-[9px] uppercase font-bold">Custo Estimado:</span>
-                    <span className="font-bold text-emerald-800">{currentRecipe.costEstimate || "Em cálculo"}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 1: Ingredients Table & Equipment */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
-              
-              {/* Ingredients Table */}
-              <div className="md:col-span-8">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1 rounded mb-2 flex items-center justify-between">
-                  <span>1. Ingredientes & Pré-preparo (Mise en Place)</span>
-                  <span className="text-[10px] text-stone-500 font-mono">100% Pesado na Balança</span>
-                </h3>
-
-                <div className="border border-stone-300 rounded overflow-hidden">
-                  <table className="min-w-full divide-y divide-stone-200 text-xs text-left">
-                    <thead className="bg-stone-100 font-bold uppercase text-[10px] text-stone-700">
-                      <tr>
-                        <th className="px-3 py-1.5">Ingrediente / Matéria-Prima</th>
-                        <th className="px-3 py-1.5 w-24 text-right">Qtd Bruta</th>
-                        <th className="px-3 py-1.5">Instrução de Pré-Preparo</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-200 bg-white">
-                      {currentRecipe.ingredients.map((ing, idx) => (
-                        <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-stone-50/50'}>
-                          <td className="px-3 py-1.5 font-medium text-stone-900">
-                            <Editable path={`recipe.${currentRecipe.id}.ing.${idx}.item`} seed={ing.item} />
-                          </td>
-                          <td className="px-3 py-1.5 font-bold font-mono text-right text-stone-800">
-                            <Editable path={`recipe.${currentRecipe.id}.ing.${idx}.qty`} seed={`${ing.grossQty} ${ing.unit}`} />
-                          </td>
-                          <td className="px-3 py-1.5 text-stone-600 text-[11px]">
-                            <Editable path={`recipe.${currentRecipe.id}.ing.${idx}.notes`} seed={ing.prePrepNotes || '-'} />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Foto oficial do prato — carregada pela equipe */}
-              <div className="md:col-span-4 flex flex-col justify-between">
-                <PhotoUpload
-                  photoKey={`recipe:${currentRecipe.id}`}
-                  label="Foto Oficial do Prato"
-                  ratio="wide"
-                  caption={`${currentRecipe.dishName} — padrão Bistrô Pai d'Égua`}
-                  onAnnotate={onOpenIllustrator ? () => onOpenIllustrator(currentRecipe.id) : undefined}
-                />
-
-                <div className="mt-3 bg-stone-50 p-2.5 rounded border border-stone-200 text-xs">
-                  <span className="font-bold text-stone-800 block text-[11px] uppercase mb-1">Utensílios Necessários:</span>
-                  <ul className="text-[11px] text-stone-600 space-y-0.5">
-                    {currentRecipe.equipmentUtensils.map((eq, eIdx) => (
-                      <li key={eIdx}>• {eq}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Section 2: Step-by-Step Cooking */}
-            <div className="mb-6">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1 rounded mb-3">
-                2. Modo de Preparo e Cocção (Passo a Passo Rigoroso)
-              </h3>
-
-              <div className="bg-stone-50 border border-stone-300 rounded-lg p-4 space-y-2 text-xs sm:text-sm text-stone-800">
-                <EditableList
-                  path={`recipe.${currentRecipe.id}.steps`}
-                  seed={currentRecipe.stepByStep}
-                  addLabel="Novo passo…"
-                  read={(step, idx) => (
-                    <p key={idx} className="leading-relaxed font-medium">{step}</p>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Section 3: Plating & Safety Alerts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 page-break-inside-avoid">
-              <div className="bg-amber-50/70 border border-amber-300 rounded-lg p-3.5">
-                <span className="font-bold text-amber-950 block text-xs uppercase mb-1.5 flex items-center space-x-1.5">
-                  <span>🍽️</span>
-                  <span>Padrão de Empratamento & Apresentação</span>
-                </span>
-                <ul className="text-xs text-amber-900 space-y-1">
-                  <EditableList
-                    path={`recipe.${currentRecipe.id}.plating`}
-                    seed={currentRecipe.platingStandard}
-                    addLabel="Novo padrão de montagem…"
-                    read={(pl, pIdx) => <li key={pIdx}>• {pl}</li>}
-                  />
-                </ul>
-              </div>
-
-              <div className="bg-rose-50/70 border border-rose-300 rounded-lg p-3.5">
-                <span className="font-bold text-rose-950 block text-xs uppercase mb-1.5 flex items-center space-x-1.5">
-                  <ShieldAlert className="w-4 h-4 text-rose-600" />
-                  <span>Pontos Críticos de Segurança e Validade</span>
-                </span>
-                <div className="text-xs text-rose-900 space-y-1.5">
-                  <EditableList
-                    path={`recipe.${currentRecipe.id}.safety`}
-                    seed={currentRecipe.criticalSafetyNotes}
-                    addLabel="Novo ponto de segurança…"
-                    read={(note, nIdx) => <p key={nIdx} className="leading-snug">{note}</p>}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Signatures */}
-            <div className="pt-3 border-t-2 border-stone-800 flex justify-between items-center text-xs text-stone-600">
-              <div><span className="font-bold text-stone-900">Elaborado por:</span> {currentRecipe.author}</div>
-              <div><span className="font-bold text-stone-900">Validado por:</span> {currentRecipe.validatedBy}</div>
-              <div className="font-mono text-[10px] text-stone-400">Bistrô Pai d'Égua • Ficha Técnica Oficial</div>
-            </div>
-
+          {/* Versão de impressão — a ficha ativa, ou todas quando "Imprimir Todas as Fichas" é usado */}
+          <div className="print-only">
+            {isBatchPrinting
+              ? RECIPES_DATA.map((r) => renderRecipeSheet(r, true))
+              : renderRecipeSheet(currentRecipe, true)}
           </div>
         </div>
       )}

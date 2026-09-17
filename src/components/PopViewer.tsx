@@ -61,7 +61,7 @@ export const PopViewer: React.FC<PopViewerProps> = ({ selectedPopId, onOpenIllus
       {/* Official POP Document Card (A4 Printable) */}
       <div 
         id="printable-pop"
-        data-print-fit="landscape"
+        data-print-fit="portrait"
         className="bg-white border border-stone-300 rounded-xl p-8 sm:p-10 shadow-paper relative overflow-hidden"
       >
         {/* Subtle Brand Watermark */}

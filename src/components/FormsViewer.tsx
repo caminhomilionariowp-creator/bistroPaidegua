@@ -59,7 +59,7 @@ export const FormsViewer: React.FC<FormsViewerProps> = ({ selectedFormId }) => {
       {/* Official Form Sheet (Print A4 Styled) */}
       <div
         id="printable-form"
-        data-print-fit="landscape"
+        data-print-fit="portrait"
         className="bg-white border-2 border-stone-800 rounded-xl p-6 sm:p-8 shadow-paper relative overflow-hidden"
       >
         {/* Subtle Brand Watermark */}
