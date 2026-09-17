@@ -52,6 +52,7 @@ const SQRT2 = Math.SQRT2;
 const clearFit = (el: HTMLElement) => {
   (el.style as any).zoom = '';
   (el.style as any).width = el.dataset.printFitOrigWidth || '';
+  el.style.height = '';
   el.style.marginTop = '';
   el.style.marginLeft = '';
   delete el.dataset.printFitOrigWidth;
@@ -100,11 +101,29 @@ const applyFit = () => {
     // md:grid-cols-3 ativem do mesmo jeito que na tela, não dependendo do
     // papel real escolhido pelo navegador).
     el.style.width = `${designWpx}px`;
+    el.style.height = '';
     const naturalH = el.scrollHeight || designHpx;
+
+    // Documentos com data-print-fill="true": se o conteúdo natural for mais
+    // "raso" que a proporção da folha real, força a altura do elemento pra
+    // ALTURA IDEAL (a que, aplicando o MESMO zoom da largura, resulta exata-
+    // mente na altura real disponível) — em vez de deixar a folga acumulada
+    // como espaço em branco no fim. O elemento vira flex-col justify-between
+    // no CSS de impressão pra essa folga sobrar DISTRIBUÍDA entre as seções
+    // (mais "respiro" entre elas) em vez de tudo empurrado pro topo.
+    const canFill = el.dataset.printFill === 'true';
+    let effectiveH = naturalH;
+    if (canFill) {
+      const idealNaturalH = designWpx * (designHpx / realAvailableW);
+      if (idealNaturalH > naturalH) {
+        el.style.height = `${idealNaturalH}px`;
+        effectiveH = idealNaturalH;
+      }
+    }
 
     const safety = readSafety(el);
     const widthScale = (realAvailableW * safety) / designWpx;
-    const heightScale = (designHpx * safety) / naturalH;
+    const heightScale = (designHpx * safety) / effectiveH;
     // Por padrão nunca AUMENTA além do tamanho de design (só encolhe) — é o
     // comportamento já validado em Cartazes/Pôsteres/Dossiê. Documentos com
     // data-print-grow="true" podem CRESCER além disso também, pra ocupar
@@ -116,15 +135,18 @@ const applyFit = () => {
     // visualmente, não muda o tamanho de layout que o motor de paginação de
     // impressão enxerga — no Chrome isso corta o conteúdo pelo tamanho
     // ORIGINAL (a altura "errada" citada em bugs conhecidos do Chrome pra
-    // print + transform). zoom encolhe de verdade o espaço ocupado.
-    if (scale < 1) (el.style as any).zoom = String(scale);
+    // print + transform). zoom encolhe de verdade o espaço ocupado. Sempre
+    // aplicado (mesmo quando cresce, scale > 1) — um bug aqui deixava de
+    // aplicar o zoom quando não era encolhimento, e o "crescer" não surtia
+    // efeito nenhum de verdade.
+    (el.style as any).zoom = String(scale);
 
     // zoom encolhe as duas dimensões igualmente, então quando a folha "sobra"
     // mais numa direção que na outra, o conteúdo fica jogado no canto
     // superior esquerdo. Centraliza a folga (horizontal e vertical) em vez
     // de deixar tudo empurrado pra um lado só.
     const renderedW = designWpx * scale;
-    const renderedH = naturalH * scale;
+    const renderedH = effectiveH * scale;
     const leftoverW = Math.max(0, realAvailableW - renderedW);
     const leftoverH = Math.max(0, designHpx - renderedH);
     el.style.marginLeft = `${leftoverW / 2 / scale}px`;
