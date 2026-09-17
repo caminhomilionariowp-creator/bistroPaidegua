@@ -30,14 +30,20 @@ const DESIGN_W_MM: Record<'landscape' | 'portrait', number> = {
   portrait: 297 - 16,
 };
 
-/** Orçamento de altura: SEMPRE a dimensão física mais curta do A3 (297mm),
- *  não importa a orientação pedida. O Chrome lembra o último "Layout"
- *  escolhido no diálogo de impressão entre uma folha e outra — então uma
- *  folha marcada "retrato" pode muito bem sair impressa em paisagem de
- *  verdade (mais curta). Usar sempre o valor mais curto como teto garante
- *  caber numa folha só nos dois casos, em vez de vazar quando o Chrome usa
- *  a orientação "errada" sem avisar.  */
-const SAFE_HEIGHT_MM = 297 - 16;
+/** Toda folha ISO (A2, A3, A4, ...) tem a MESMA proporção entre lado maior e
+ *  lado menor: maior = menor × √2. O Chrome lembra o último papel/orientação
+ *  escolhido no diálogo entre um job de impressão e outro (visto na prática:
+ *  um documento marcado A3 saiu como A2, veio bem menos encolhido do que a
+ *  conta assumia — sobrou espaço em branco e a letra ficou minúscula à toa).
+ *  Em vez de chutar um tamanho fixo (que só está certo quando o Chrome usa
+ *  exatamente o papel esperado), a altura disponível é sempre CALCULADA a
+ *  partir da largura real medida (essa, sim, é confiável — é o espaço que o
+ *  próprio navegador reservou pro conteúdo). Assumir que a largura medida é
+ *  o lado MAIOR da folha (divide por √2 pra achar a altura) é a aposta seg-
+ *  ura: se a folha real for retrato (largura = lado menor), a altura calcu-
+ *  lada fica um pouco menor que a real de verdade — sobra encolhida demais,
+ *  nunca de menos — então nunca volta a cortar/vazar pra 2ª folha.       */
+const SQRT2 = Math.SQRT2;
 
 const clearFit = (el: HTMLElement) => {
   (el.style as any).zoom = '';
@@ -70,7 +76,6 @@ const applyFit = () => {
       | 'landscape'
       | 'portrait';
     const designWpx = DESIGN_W_MM[orientation] * MM_TO_PX;
-    const designHpx = SAFE_HEIGHT_MM * MM_TO_PX;
 
     // Largura real disponível na folha, o que quer que o navegador tenha
     // escolhido (nem sempre é A3 — o diálogo de impressão às vezes ignora
@@ -80,6 +85,10 @@ const applyFit = () => {
     (el.style as any).zoom = '';
     el.style.width = '';
     const realAvailableW = el.parentElement?.clientWidth || designWpx;
+
+    // Altura disponível: derivada da largura real medida (ver comentário do
+    // SQRT2 acima), não de um tamanho de papel fixo assumido.
+    const designHpx = realAvailableW / SQRT2;
 
     // Monta o conteúdo sempre na largura de design (garante que grades tipo
     // md:grid-cols-3 ativem do mesmo jeito que na tela, não dependendo do
