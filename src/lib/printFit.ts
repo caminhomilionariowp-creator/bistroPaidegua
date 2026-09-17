@@ -11,6 +11,16 @@ const MM_TO_PX = 96 / 25.4;
  *  folga aqui é o que garante caber numa folha só na prática, não só na conta. */
 const SAFETY = 0.8;
 
+/** Documentos com muito texto denso (tabela + passo a passo, ex.: Ficha Técnica)
+ *  precisam de uma folga MAIOR que cartazes/pôsteres: o texto real impresso pelo
+ *  Chrome quebra linha de um jeito levemente diferente do medido na tela, e isso
+ *  é o suficiente pra "vazar" pra uma 2ª folha mesmo com a conta "exata" batendo.
+ *  Uma folha pode declarar sua própria folga via data-print-safety="0.65". */
+const readSafety = (el: HTMLElement): number => {
+  const override = parseFloat(el.dataset.printSafety || '');
+  return Number.isFinite(override) && override > 0 && override <= 1 ? override : SAFETY;
+};
+
 /** Largura "de design" — a folha SEMPRE é montada nesse tamanho fixo (é o que
  *  garante que grades responsivas tipo md:grid-cols-3 caiam sempre no mesmo
  *  breakpoint, iguais à tela). O tamanho final na página real é feito depois,
@@ -77,8 +87,9 @@ const applyFit = () => {
     el.style.width = `${designWpx}px`;
     const naturalH = el.scrollHeight || designHpx;
 
-    const widthScale = (realAvailableW * SAFETY) / designWpx;
-    const heightScale = (designHpx * SAFETY) / naturalH;
+    const safety = readSafety(el);
+    const widthScale = (realAvailableW * safety) / designWpx;
+    const heightScale = (designHpx * safety) / naturalH;
     const scale = Math.min(1, widthScale, heightScale);
 
     // "zoom" (não "transform: scale") de propósito: transform só re-pinta

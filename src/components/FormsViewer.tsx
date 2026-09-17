@@ -60,6 +60,7 @@ export const FormsViewer: React.FC<FormsViewerProps> = ({ selectedFormId }) => {
       <div
         id="printable-form"
         data-print-fit="portrait"
+        data-print-safety="0.65"
         className="bg-white border-2 border-stone-800 rounded-xl p-6 sm:p-8 shadow-paper relative overflow-hidden"
       >
         {/* Subtle Brand Watermark */}

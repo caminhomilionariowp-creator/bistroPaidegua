@@ -58,13 +58,14 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
           <div
             id={isPrintView ? undefined : "printable-recipe"}
             data-print-fit={isPrintView ? "portrait" : undefined}
-            className="bg-white border-2 border-stone-800 rounded-xl p-6 sm:p-8 shadow-paper relative overflow-hidden"
+            data-print-safety={isPrintView ? "0.62" : undefined}
+            className="bg-white border-2 border-stone-800 rounded-xl p-6 sm:p-8 print:p-4 shadow-paper relative overflow-hidden"
           >
             {/* Subtle Brand Watermark */}
             <BrandWatermarkOverlay opacity={0.035} />
 
             {/* Header Block */}
-            <div className="relative z-10 border-2 border-stone-900 rounded-lg overflow-hidden mb-6">
+            <div className="relative z-10 border-2 border-stone-900 rounded-lg overflow-hidden mb-6 print:mb-3">
               <div className="grid grid-cols-1 sm:grid-cols-12 border-b border-stone-900">
                 <div className="sm:col-span-3 p-3 bg-stone-900 text-white flex flex-col justify-center items-center text-center">
                   <BrandLogo variant="horizontal" size="xs" theme="dark" />
@@ -115,11 +116,11 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
             </div>
 
             {/* Section 1: Ingredients Table & Equipment */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 print:gap-3 mb-6 print:mb-3">
 
               {/* Ingredients Table */}
               <div className="md:col-span-8">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1 rounded mb-2 flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1 rounded mb-2 print:mb-1 flex items-center justify-between">
                   <span>1. Ingredientes & Pré-preparo (Mise en Place)</span>
                   <span className="text-[10px] text-stone-500 font-mono">100% Pesado na Balança</span>
                 </h3>
@@ -162,8 +163,8 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
                   onAnnotate={onOpenIllustrator ? () => onOpenIllustrator(recipe.id) : undefined}
                 />
 
-                <div className="mt-3 bg-stone-50 p-2.5 rounded border border-stone-200 text-xs">
-                  <span className="font-bold text-stone-800 block text-[11px] uppercase mb-1">Utensílios Necessários:</span>
+                <div className="mt-3 print:mt-1.5 bg-stone-50 p-2.5 print:p-1.5 rounded border border-stone-200 text-xs">
+                  <span className="font-bold text-stone-800 block text-[11px] uppercase mb-1 print:mb-0.5">Utensílios Necessários:</span>
                   <ul className="text-[11px] text-stone-600 space-y-0.5">
                     {recipe.equipmentUtensils.map((eq, eIdx) => (
                       <li key={eIdx}>• {eq}</li>
@@ -175,31 +176,31 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
             </div>
 
             {/* Section 2: Step-by-Step Cooking */}
-            <div className="mb-6">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1 rounded mb-3">
+            <div className="mb-6 print:mb-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1 rounded mb-3 print:mb-1.5">
                 2. Modo de Preparo e Cocção (Passo a Passo Rigoroso)
               </h3>
 
-              <div className="bg-stone-50 border border-stone-300 rounded-lg p-4 space-y-2 text-xs sm:text-sm text-stone-800">
+              <div className="bg-stone-50 border border-stone-300 rounded-lg p-4 print:p-2.5 space-y-2 print:space-y-1 text-xs sm:text-sm text-stone-800">
                 <EditableList
                   path={`recipe.${recipe.id}.steps`}
                   seed={recipe.stepByStep}
                   addLabel="Novo passo…"
                   read={(step, idx) => (
-                    <p key={idx} className="leading-relaxed font-medium">{step}</p>
+                    <p key={idx} className="leading-relaxed print:leading-snug font-medium">{step}</p>
                   )}
                 />
               </div>
             </div>
 
             {/* Section 3: Plating & Safety Alerts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 page-break-inside-avoid">
-              <div className="bg-amber-50/70 border border-amber-300 rounded-lg p-3.5">
-                <span className="font-bold text-amber-950 block text-xs uppercase mb-1.5 flex items-center space-x-1.5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:gap-2 mb-6 print:mb-3 page-break-inside-avoid">
+              <div className="bg-amber-50/70 border border-amber-300 rounded-lg p-3.5 print:p-2">
+                <span className="font-bold text-amber-950 block text-xs uppercase mb-1.5 print:mb-1 flex items-center space-x-1.5">
                   <span>🍽️</span>
                   <span>Padrão de Empratamento & Apresentação</span>
                 </span>
-                <ul className="text-xs text-amber-900 space-y-1">
+                <ul className="text-xs text-amber-900 space-y-1 print:space-y-0.5">
                   <EditableList
                     path={`recipe.${recipe.id}.plating`}
                     seed={recipe.platingStandard}
@@ -209,12 +210,12 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
                 </ul>
               </div>
 
-              <div className="bg-rose-50/70 border border-rose-300 rounded-lg p-3.5">
-                <span className="font-bold text-rose-950 block text-xs uppercase mb-1.5 flex items-center space-x-1.5">
+              <div className="bg-rose-50/70 border border-rose-300 rounded-lg p-3.5 print:p-2">
+                <span className="font-bold text-rose-950 block text-xs uppercase mb-1.5 print:mb-1 flex items-center space-x-1.5">
                   <ShieldAlert className="w-4 h-4 text-rose-600" />
                   <span>Pontos Críticos de Segurança e Validade</span>
                 </span>
-                <div className="text-xs text-rose-900 space-y-1.5">
+                <div className="text-xs text-rose-900 space-y-1.5 print:space-y-0.5">
                   <EditableList
                     path={`recipe.${recipe.id}.safety`}
                     seed={recipe.criticalSafetyNotes}
@@ -226,7 +227,7 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
             </div>
 
             {/* Signatures */}
-            <div className="pt-3 border-t-2 border-stone-800 flex justify-between items-center text-xs text-stone-600">
+            <div className="pt-3 print:pt-1.5 border-t-2 border-stone-800 flex justify-between items-center text-xs text-stone-600">
               <div><span className="font-bold text-stone-900">Elaborado por:</span> {recipe.author}</div>
               <div><span className="font-bold text-stone-900">Validado por:</span> {recipe.validatedBy}</div>
               <div className="font-mono text-[10px] text-stone-400">Bistrô Pai d'Égua • Ficha Técnica Oficial</div>

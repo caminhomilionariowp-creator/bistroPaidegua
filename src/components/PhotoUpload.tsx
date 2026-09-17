@@ -21,10 +21,13 @@ interface PhotoUploadProps {
   className?: string;
 }
 
+/* Em impressão, a caixa (com ou sem foto) usa uma proporção bem mais baixa que na
+ * tela — numa ficha técnica compacta em 1 folha A3, a caixa 4:3 sozinha já tomava
+ * uma fatia grande demais da altura disponível, mesmo sem foto nenhuma carregada. */
 const RATIO_H: Record<string, string> = {
-  wide: 'aspect-[4/3]',
-  square: 'aspect-square',
-  tall: 'aspect-[3/4]',
+  wide: 'aspect-[4/3] print:aspect-[16/6]',
+  square: 'aspect-square print:aspect-[16/6]',
+  tall: 'aspect-[3/4] print:aspect-[16/6]',
 };
 
 export const PhotoUpload: React.FC<PhotoUploadProps> = ({
@@ -121,13 +124,13 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
         </div>
       ) : (
         <div
-          className={`${RATIO_H[ratio]} rounded-lg border-2 border-dashed border-amber-300 bg-gradient-to-br from-amber-50 to-stone-100 flex flex-col items-center justify-center p-3 text-center gap-2`}
+          className={`${RATIO_H[ratio]} rounded-lg border-2 border-dashed border-amber-300 bg-gradient-to-br from-amber-50 to-stone-100 flex flex-col items-center justify-center p-3 print:p-1 text-center gap-2 print:gap-0.5`}
         >
-          <Camera className="w-8 h-8 text-amber-500" />
+          <Camera className="w-8 h-8 print:w-5 print:h-5 text-amber-500" />
           <span className="text-[11px] font-bold text-stone-700">
             {busy ? 'Salvando…' : 'Sem foto ainda'}
           </span>
-          {caption && <span className="text-[10px] text-stone-500 leading-tight">{caption}</span>}
+          {caption && <span className="text-[10px] text-stone-500 leading-tight print:hidden">{caption}</span>}
           <div className="no-print flex flex-wrap items-center justify-center gap-1.5 mt-1">
             <button
               onClick={() => cameraRef.current?.click()}
