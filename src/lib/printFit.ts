@@ -9,7 +9,7 @@ const MM_TO_PX = 96 / 25.4;
 /** Margem de segurança: encolhe um pouco além da conta "exata" — o Chrome real
  *  usa margens/áreas úteis que variam (impressora, driver, versão), então uma
  *  folga aqui é o que garante caber numa folha só na prática, não só na conta. */
-const SAFETY = 0.75;
+const SAFETY = 0.8;
 
 /** Largura/altura "de design" — a folha SEMPRE é montada nesse tamanho fixo
  *  (é o que garante que grades responsivas tipo md:grid-cols-3 caiam sempre
