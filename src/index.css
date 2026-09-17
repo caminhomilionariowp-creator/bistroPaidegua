@@ -66,7 +66,7 @@
        pra quem tem dificuldade de leitura). O encolhimento automático de cada
        folha (src/lib/printFit.ts) ainda garante que cabe tudo numa página só —
        ele reencaixa o zoom em cima desse tamanho de fonte maior. */
-    font-size: 24pt;
+    font-size: 18pt;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     height: auto !important;
