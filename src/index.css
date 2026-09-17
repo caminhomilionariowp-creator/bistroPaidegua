@@ -130,6 +130,21 @@
     break-inside: avoid !important;
   }
 
+  /* Nenhum texto pequeno na impressão: rótulos, células de tabela, legendas
+     e notas de rodapé usavam tamanhos fixos em pixel (9-11px) que NÃO
+     acompanhavam o "font-size: 22pt" do body acima (valores em px fixo, ao
+     contrário de rem, não escalam com a fonte-base) — por isso ficavam
+     minúsculos mesmo com o resto do documento já grande. Aqui eles sobem
+     pro mesmo tamanho usado nos títulos das seções (0.75rem = text-xs). */
+  [data-print-fit] .text-\[8px\],
+  [data-print-fit] .text-\[9px\],
+  [data-print-fit] .text-\[10px\],
+  [data-print-fit] .text-\[11px\],
+  [data-print-fit] .text-xs {
+    font-size: 0.75rem !important;
+    line-height: 1.35 !important;
+  }
+
   [data-print-fit]:last-child {
     page-break-after: auto !important;
     break-after: auto !important;
