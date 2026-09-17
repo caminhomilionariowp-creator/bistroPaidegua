@@ -59,7 +59,7 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
             id={isPrintView ? undefined : "printable-recipe"}
             data-print-fit={isPrintView ? "portrait" : undefined}
             data-print-height={isPrintView ? "auto" : undefined}
-            data-print-safety={isPrintView ? "0.78" : undefined}
+            data-print-safety={isPrintView ? "0.92" : undefined}
             className="bg-white border-2 border-stone-800 rounded-xl p-6 sm:p-8 print:p-4 shadow-paper relative overflow-hidden"
           >
             {/* Subtle Brand Watermark */}
