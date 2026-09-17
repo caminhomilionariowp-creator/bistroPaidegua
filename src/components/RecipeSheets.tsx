@@ -240,7 +240,7 @@ export const RecipeSheets: React.FC<RecipeSheetsProps> = ({
   );
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-16">
+    <div className="max-w-5xl print:max-w-none mx-auto space-y-6 pb-16">
       
       {/* Top Navigation & View Switcher */}
       <div className="no-print bg-white p-4 rounded-xl border border-stone-300 shadow-xs flex flex-wrap items-center justify-between gap-3">
