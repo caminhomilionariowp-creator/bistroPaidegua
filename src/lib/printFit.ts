@@ -11,14 +11,23 @@ const MM_TO_PX = 96 / 25.4;
  *  folga aqui é o que garante caber numa folha só na prática, não só na conta. */
 const SAFETY = 0.8;
 
-/** Largura/altura "de design" — a folha SEMPRE é montada nesse tamanho fixo
- *  (é o que garante que grades responsivas tipo md:grid-cols-3 caiam sempre
- *  no mesmo breakpoint, iguais à tela). O tamanho final na página real é
- *  feito depois, com um único scale() que encolhe esse design pra caber. */
-const DESIGN_MM: Record<'landscape' | 'portrait', { w: number; h: number }> = {
-  landscape: { w: 420 - 16, h: 297 - 16 },
-  portrait: { w: 297 - 16, h: 420 - 16 },
+/** Largura "de design" — a folha SEMPRE é montada nesse tamanho fixo (é o que
+ *  garante que grades responsivas tipo md:grid-cols-3 caiam sempre no mesmo
+ *  breakpoint, iguais à tela). O tamanho final na página real é feito depois,
+ *  com um único zoom() que encolhe esse design pra caber. */
+const DESIGN_W_MM: Record<'landscape' | 'portrait', number> = {
+  landscape: 420 - 16,
+  portrait: 297 - 16,
 };
+
+/** Orçamento de altura: SEMPRE a dimensão física mais curta do A3 (297mm),
+ *  não importa a orientação pedida. O Chrome lembra o último "Layout"
+ *  escolhido no diálogo de impressão entre uma folha e outra — então uma
+ *  folha marcada "retrato" pode muito bem sair impressa em paisagem de
+ *  verdade (mais curta). Usar sempre o valor mais curto como teto garante
+ *  caber numa folha só nos dois casos, em vez de vazar quando o Chrome usa
+ *  a orientação "errada" sem avisar.  */
+const SAFE_HEIGHT_MM = 297 - 16;
 
 const clearFit = (el: HTMLElement) => {
   (el.style as any).zoom = '';
@@ -50,9 +59,8 @@ const applyFit = () => {
     const orientation = (el.dataset.printFit === 'portrait' ? 'portrait' : 'landscape') as
       | 'landscape'
       | 'portrait';
-    const design = DESIGN_MM[orientation];
-    const designWpx = design.w * MM_TO_PX;
-    const designHpx = design.h * MM_TO_PX;
+    const designWpx = DESIGN_W_MM[orientation] * MM_TO_PX;
+    const designHpx = SAFE_HEIGHT_MM * MM_TO_PX;
 
     // Largura real disponível na folha, o que quer que o navegador tenha
     // escolhido (nem sempre é A3 — o diálogo de impressão às vezes ignora
