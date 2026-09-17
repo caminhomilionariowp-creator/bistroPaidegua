@@ -145,6 +145,18 @@
     line-height: 1.35 !important;
   }
 
+  /* Ficha Técnica pode CRESCER (data-print-grow) até o limite da largura real
+     da folha — mas se o conteúdo natural for mais "raso" que a folha (ex.:
+     papel A2, bem mais alto), sobra vazio embaixo porque o zoom só encolhe/
+     cresce igual nos dois eixos. Aumentar o espaçamento vertical aqui faz o
+     conteúdo natural ficar mais alto, ocupando melhor a altura disponível
+     em vez de deixar espaço em branco — sem mexer em nenhum outro documento
+     (só entra na Ficha Técnica, via a classe .recipe-sheet-print). */
+  .recipe-sheet-print,
+  .recipe-sheet-print * {
+    line-height: 1.6 !important;
+  }
+
   [data-print-fit]:last-child {
     page-break-after: auto !important;
     break-after: auto !important;
