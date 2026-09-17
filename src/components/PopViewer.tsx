@@ -62,6 +62,7 @@ export const PopViewer: React.FC<PopViewerProps> = ({ selectedPopId, onOpenIllus
       <div 
         id="printable-pop"
         data-print-fit="portrait"
+        data-print-height="auto"
         data-print-safety="0.78"
         className="bg-white border border-stone-300 rounded-xl p-8 sm:p-10 shadow-paper relative overflow-hidden"
       >

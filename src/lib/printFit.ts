@@ -30,19 +30,23 @@ const DESIGN_W_MM: Record<'landscape' | 'portrait', number> = {
   portrait: 297 - 16,
 };
 
+/** Orçamento de altura padrão: SEMPRE a dimensão física mais curta do A3
+ *  (297mm), não importa a orientação pedida — é o que já está confirmado
+ *  funcionando pra Cartazes/Pôsteres/Dossiê. NÃO MEXER aqui sem necessidade:
+ *  esses documentos já foram validados e não devem ser reencolhidos. */
+const SAFE_HEIGHT_MM = 297 - 16;
+
 /** Toda folha ISO (A2, A3, A4, ...) tem a MESMA proporção entre lado maior e
  *  lado menor: maior = menor × √2. O Chrome lembra o último papel/orientação
- *  escolhido no diálogo entre um job de impressão e outro (visto na prática:
- *  um documento marcado A3 saiu como A2, veio bem menos encolhido do que a
- *  conta assumia — sobrou espaço em branco e a letra ficou minúscula à toa).
- *  Em vez de chutar um tamanho fixo (que só está certo quando o Chrome usa
- *  exatamente o papel esperado), a altura disponível é sempre CALCULADA a
- *  partir da largura real medida (essa, sim, é confiável — é o espaço que o
- *  próprio navegador reservou pro conteúdo). Assumir que a largura medida é
- *  o lado MAIOR da folha (divide por √2 pra achar a altura) é a aposta seg-
- *  ura: se a folha real for retrato (largura = lado menor), a altura calcu-
- *  lada fica um pouco menor que a real de verdade — sobra encolhida demais,
- *  nunca de menos — então nunca volta a cortar/vazar pra 2ª folha.       */
+ *  escolhido no diálogo entre um job de impressão e outro (visto na prática
+ *  nas Fichas Técnicas: marcada A3, saiu impressa como A2 — bem menos enco-
+ *  lhida do que os 281mm fixos assumiam, sobrando espaço em branco e letra
+ *  minúscula à toa). Pra documentos que optarem com data-print-height="auto",
+ *  a altura disponível é CALCULADA a partir da largura real medida (essa,
+ *  sim, é confiável) em vez de um tamanho de papel fixo. Assumir que a
+ *  largura medida é o lado MAIOR da folha (divide por √2) é a aposta segura:
+ *  se a folha real for retrato, a altura calculada fica um pouco menor que a
+ *  real — encolhe demais, nunca de menos — então nunca vaza pra 2ª folha. */
 const SQRT2 = Math.SQRT2;
 
 const clearFit = (el: HTMLElement) => {
@@ -86,9 +90,11 @@ const applyFit = () => {
     el.style.width = '';
     const realAvailableW = el.parentElement?.clientWidth || designWpx;
 
-    // Altura disponível: derivada da largura real medida (ver comentário do
-    // SQRT2 acima), não de um tamanho de papel fixo assumido.
-    const designHpx = realAvailableW / SQRT2;
+    // Altura disponível: por padrão o valor fixo já validado (297mm, ver
+    // SAFE_HEIGHT_MM). Documentos com data-print-height="auto" usam o cálculo
+    // proporcional à largura real medida (ver comentário do SQRT2 acima).
+    const designHpx =
+      el.dataset.printHeight === 'auto' ? realAvailableW / SQRT2 : SAFE_HEIGHT_MM * MM_TO_PX;
 
     // Monta o conteúdo sempre na largura de design (garante que grades tipo
     // md:grid-cols-3 ativem do mesmo jeito que na tela, não dependendo do
