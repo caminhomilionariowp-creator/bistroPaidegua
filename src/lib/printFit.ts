@@ -105,7 +105,12 @@ const applyFit = () => {
     const safety = readSafety(el);
     const widthScale = (realAvailableW * safety) / designWpx;
     const heightScale = (designHpx * safety) / naturalH;
-    const scale = Math.min(1, widthScale, heightScale);
+    // Por padrão nunca AUMENTA além do tamanho de design (só encolhe) — é o
+    // comportamento já validado em Cartazes/Pôsteres/Dossiê. Documentos com
+    // data-print-grow="true" podem CRESCER além disso também, pra ocupar
+    // folhas maiores (ex.: papel A2) em vez de sobrar espaço vazio na lateral.
+    const canGrow = el.dataset.printGrow === 'true';
+    const scale = canGrow ? Math.min(widthScale, heightScale) : Math.min(1, widthScale, heightScale);
 
     // "zoom" (não "transform: scale") de propósito: transform só re-pinta
     // visualmente, não muda o tamanho de layout que o motor de paginação de
